@@ -34,10 +34,9 @@
 #include "br_private.h"
 
 #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
-static inline int ipv6_is_local_multicast(const struct in6_addr *addr)
+static inline int ipv6_is_transient_multicast(const struct in6_addr *addr)
 {
-	if (ipv6_addr_is_multicast(addr) &&
-	    IPV6_ADDR_MC_SCOPE(addr) <= IPV6_ADDR_SCOPE_LINKLOCAL)
+	if (ipv6_addr_is_multicast(addr) && IPV6_ADDR_MC_FLAG_TRANSIENT(addr))
 		return 1;
 	return 0;
 }
@@ -767,7 +766,7 @@ static int br_ip6_multicast_add_group(struct net_bridge *br,
 {
 	struct br_ip br_group;
 
-	if (ipv6_is_local_multicast(group))
+	if (!ipv6_is_transient_multicast(group))
 		return 0;
 
 	ipv6_addr_copy(&br_group.u.ip6, group);
@@ -1321,7 +1320,7 @@ static void br_ip6_multicast_leave_group(struct net_bridge *br,
 {
 	struct br_ip br_group;
 
-	if (ipv6_is_local_multicast(group))
+	if (!ipv6_is_transient_multicast(group))
 		return;
 
 	ipv6_addr_copy(&br_group.u.ip6, group);
