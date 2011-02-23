@@ -176,7 +176,7 @@ struct tcf_proto {
 
 struct qdisc_skb_cb {
 	unsigned int		pkt_len;
-	char			data[];
+	long			data[];
 };
 
 static inline int qdisc_qlen(struct Qdisc *q)
