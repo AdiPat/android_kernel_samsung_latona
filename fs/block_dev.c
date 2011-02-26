@@ -1197,6 +1197,7 @@ EXPORT_SYMBOL(open_by_devnum);
  * flush_disk - invalidates all buffer-cache entries on a disk
  *
  * @bdev:      struct block device to be flushed
+ * @kill_dirty: flag to guide handling of dirty inodes
  *
  * Invalidates all buffer-cache entries on a disk. It should be called
  * when a disk has been changed -- either by a media change or online
