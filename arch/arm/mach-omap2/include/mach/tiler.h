@@ -47,6 +47,17 @@ enum tiler_fmt {
 	TILFMT_MAX     = 4
 };
 
+/* tiler (image/video frame) view */
+  struct tiler_view_t {
+
+          u32 tsptr;              /* tiler space addr */
+          u32 width;              /* width */
+          u32 height;             /* height */
+          u32 bpp;                /* bytes per pixel */
+          s32 h_inc;              /* horizontal increment */
+          s32 v_inc;              /* vertical increment */
+};
+
 struct area {
 	u16 width;
 	u16 height;
@@ -116,6 +127,11 @@ int tiler_unreg_notifier(struct notifier_block *nb);
  *
  * @return error status
  */
+
+void tilview_create(struct tiler_view_t *view, u32 phys, u32 width, u32 height);
+
+s32 tilview_crop(struct tiler_view_t *view, u32 left, u32 top, u32 width, u32 height);
+
 s32 tiler_alloc(enum tiler_fmt fmt, u32 width, u32 height, u32 *sys_addr);
 
 /**
