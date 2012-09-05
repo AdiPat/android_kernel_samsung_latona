@@ -7,7 +7,7 @@ make clean mrproper
 
 echo "Building Config"
 
-make latona_galaxysl_defconfig
+make titanium_defconfig
 
 # Make modules
 
