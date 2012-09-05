@@ -2,23 +2,16 @@
 CYANOGENMOD=../../..
 
 # Make mrproper
-make mrproper
+make clean mrproper
 
 # Set config
 make latona_galaxysl_defconfig
 
 # Make modules
-nice -n 10 make -j8 modules
+make -j8
 
 # Copy modules
-find -name '*.ko' -exec cp -av {} $CYANOGENMOD/device/samsung/galaxysl/modules/ \;
+find -name '*.ko' -exec cp -av {} ../tools/out/system/lib/modules/ \;
 
-# Build kernel
-nice -n 10 make -j8 zImage
-
-# Copy kernel
-cp arch/arm/boot/zImage $CYANOGENMOD/device/samsung/galaxysl/kernel
-
-# Make mrproper
-make mrproper
+./repack.sh 
 
