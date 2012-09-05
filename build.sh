@@ -20,6 +20,7 @@ find -name '*.ko' -exec cp -av {} ../tools/out/system/lib/modules/ \;
 
 echo "Repacking the Kernel now"
 
+cd ..
 
 ./repack.sh 
 
