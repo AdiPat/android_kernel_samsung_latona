@@ -188,8 +188,7 @@ static struct kobj_type isprsz_ktype = {
 	.sysfs_ops = &isprsz_sysfs_ops,
 	.default_attrs = isprsz_sysfs_attrs,
 };
-
-
+/*
 int create_isprsz_sysfs(struct platform_device *pdev)
 {
 	int ret = 1;
@@ -202,4 +201,5 @@ int create_isprsz_sysfs(struct platform_device *pdev)
 	}
 
 	return ret;
-}
+}*/
+
