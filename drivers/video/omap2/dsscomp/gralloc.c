@@ -25,6 +25,7 @@ static u32 prev_buf_addr;
 #endif
 
 static bool blanked;
+int omap_setup_vrfb_buffer(struct dss2_ovl_info *ovl_info);
 
 #define NUM_TILER1D_SLOTS 2
 #define TILER1D_SLOT_SIZE (16 << 20)
