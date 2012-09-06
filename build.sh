@@ -7,7 +7,7 @@ make clean mrproper
 
 echo "Building Config"
 
-make titanium_defconfig
+make test_defconfig
 
 echo "Edit build version"
 
@@ -42,9 +42,9 @@ cd out
 
 rm *.zip
 
-zip -r Titanium-Kernel$v.zip META-INF system boot.img
+zip -r Titanium-Kernel#$vrsn.zip META-INF system boot.img
 
-cp Titanium-Kernel$v.zip ../../Titanium-Kernel$v.zip
+cp Titanium-Kernel#$vrsn.zip ../../Titanium-Kernel$v.zip
 
 echo "Done"
 
