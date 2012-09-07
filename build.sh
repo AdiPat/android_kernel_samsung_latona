@@ -28,6 +28,8 @@ echo "Repacking the Kernel now"
 
 cd ..
 
+rm *.zip
+
 echo "Packing Kernel"
 
 rm tools/unpack/zImage
@@ -44,7 +46,7 @@ rm *.zip
 
 zip -r Titanium-Kernel#$vrsn.zip META-INF system boot.img
 
-cp Titanium-Kernel#$vrsn.zip ../../Titanium-Kernel$v.zip
+cp Titanium-Kernel#$vrsn.zip ../../Titanium-Kernel$vrsn.zip
 
 echo "Done"
 
