@@ -7,7 +7,7 @@ make clean mrproper
 
 echo "Building Config"
 
-make test_defconfig
+make titanium_defconfig
 
 echo "Edit build version"
 
