@@ -381,12 +381,6 @@ config TINY_RCU
 
 endchoice
 
-config PREEMPT_RCU
-	def_bool ( TREE_PREEMPT_RCU || TINY_PREEMPT_RCU )
-	help
-	  This option enables preemptible-RCU code that is common between
-	  the TREE_PREEMPT_RCU and TINY_PREEMPT_RCU implementations.
-
 config JRCU_DAEMON
        bool
        depends on JRCU
