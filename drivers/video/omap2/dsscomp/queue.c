@@ -635,8 +635,9 @@ skip_ovl_set:
 	 */
 	if (cb_programmed && r) {
 		/* clear error if callback already registered */
-		if (omap_dss_manager_unregister_callback(mgr, &cb))
-			r = 0;
+		//if (omap_dss_manager_unregister_callback(mgr, &cb))
+		//	r = 0;
+		printk(KERN_INFO "Lets fix omap_dss_manager_unregister_callback() later!\n");
 	}
 	/* if failed to apply, kick out prior composition */
 	if (comp->must_apply && r)
