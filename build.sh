@@ -17,11 +17,12 @@ echo $vrsn > .version
 
 # Make modules
 
-echo "Compiling Modules"
+echo "Compiling Modules and Kernel"
 
 make -j8
 
-# Copy modules
+echo "Copy modules"
+
 find -name '*.ko' -exec cp -av {} ../tools/out/system/lib/modules/ \;
 
 echo "Repacking the Kernel now"
@@ -42,11 +43,24 @@ tools/mkbootimg --kernel unpack/zImage --ramdisk unpack/boot.img-ramdisk.gz -o o
 
 cd out
 
+cd system/lib/modules
+
+echo "Strip modules for size"
+
+for m in $(find . | grep .ko | grep './')
+do
+        echo $m
+
+/home/aditya/Toolchain/arm-eabi-4.4.3/bin/arm-eabi-strip --strip-unneeded $i
+done
+
+cd ../../../
+
 rm *.zip
 
 zip -r Titanium-Kernel#$vrsn.zip META-INF system boot.img
 
-cp Titanium-Kernel#$vrsn.zip ../../Titanium-Kernel$vrsn.zip
+cp Titanium-Kernel#$vrsn.zip ../../Titanium-Kernel#$vrsn.zip
 
 echo "Done"
 
