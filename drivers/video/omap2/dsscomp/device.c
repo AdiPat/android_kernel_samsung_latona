@@ -547,7 +547,7 @@ static int dsscomp_probe(struct platform_device *pdev)
 	}
 
 	platform_set_drvdata(pdev, cdev);
-
+/*
 #ifdef CONFIG_OMAP3_ISP_RESIZER_ON_720P_VIDEO
 	ret = create_isprsz_sysfs(pdev);
 
@@ -556,7 +556,7 @@ static int dsscomp_probe(struct platform_device *pdev)
 			"for ISP resizer.\n");
 	}
 
-#endif
+#endif */ 
 
 	pr_info("dsscomp: initializing.\n");
 
