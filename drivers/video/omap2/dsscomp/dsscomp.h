@@ -138,6 +138,7 @@ struct dsscomp_sync_obj {
 /*
  * Kernel interface
  */
+int omap_setup_vrfb_buffer(struct dss2_ovl_info *ovl_info);
 int dsscomp_queue_init(struct dsscomp_dev *cdev);
 void dsscomp_queue_exit(void);
 void dsscomp_gralloc_init(struct dsscomp_dev *cdev);

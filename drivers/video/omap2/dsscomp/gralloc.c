@@ -25,7 +25,6 @@ static u32 prev_buf_addr;
 #endif
 
 static bool blanked;
-int omap_setup_vrfb_buffer(struct dss2_ovl_info *ovl_info);
 
 #define NUM_TILER1D_SLOTS 2
 #define TILER1D_SLOT_SIZE (16 << 20)
@@ -672,4 +671,62 @@ void dsscomp_gralloc_exit(void)
 		tiler_free_block_area(slot->slot);
 	}
 	INIT_LIST_HEAD(&free_slots);
+}
+
+int omap_setup_vrfb_buffer(struct dss2_ovl_info *ovl_info)
+{
+	int i = 0;
+	int mode = ovl_info->cfg.color_mode;
+	int got_vrfb_mapped_buf = 0;
+
+	if (!have_vrfb_ctx) {
+		pr_err("%s: No VRFB context available for setup\n", __func__);
+		return 1;
+	}
+
+	for (i = 0; i < VRFB_NUM_SLOTS; i++) {
+		if (ion_vrfb_t[i].ba == ovl_info->ba) {
+			if (ion_vrfb_t[i].ismapped) {
+				if (check_vrfb_params(
+					&ion_vrfb_t[i].vrfb_context,
+					ovl_info)) {
+					got_vrfb_mapped_buf = 0;
+					ion_vrfb_t[i].ismapped = 0;
+				} else {
+					ovl_info->ba = ion_vrfb_t[i].
+						vrfb_context.
+						paddr[ovl_info->cfg.rotation]
+						+ omap_get_vrfb_offset(
+						&ion_vrfb_t[i].vrfb_context,
+						ovl_info->cfg.rotation);
+				got_vrfb_mapped_buf = 1;
+				}
+			}
+			break;
+		}
+	}
+
+	if (!got_vrfb_mapped_buf) {
+		omap_vrfb_setup(&ion_vrfb_t[i].vrfb_context,
+				ovl_info->ba, ovl_info->cfg.crop.w,
+				ovl_info->cfg.crop.h, get_bpp(mode),
+				is_yuv_mode(mode), ovl_info->cfg.rotation);
+
+		ovl_info->ba = ion_vrfb_t[i].
+				vrfb_context.paddr[ovl_info->cfg.rotation]
+				+ omap_get_vrfb_offset(
+				&ion_vrfb_t[i].vrfb_context,
+				ovl_info->cfg.rotation);
+		ion_vrfb_t[i].ismapped = 1;
+	}
+
+	if (ovl_info->cfg.rotation & 1)	{
+		ovl_info->cfg.win.w =
+			(ovl_info->cfg.win.h * ovl_info->cfg.win.h) /
+			ovl_info->cfg.win.w;
+	}
+
+	ovl_info->cfg.stride =  VRFB_LINE_LENGTH * 2;
+
+	return 0;
 }
