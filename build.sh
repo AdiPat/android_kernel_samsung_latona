@@ -51,7 +51,7 @@ for m in $(find . | grep .ko | grep './')
 do
         echo $m
 
-/home/aditya/Toolchain/arm-eabi-4.4.3/bin/arm-eabi-strip --strip-unneeded $i
+/home/aditya/Toolchain/arm-eabi-4.4.3/bin/arm-eabi-strip --strip-unneeded $m
 done
 
 cd ../../../
