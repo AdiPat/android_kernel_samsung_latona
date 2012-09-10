@@ -1,13 +1,12 @@
 # Make mrproper
 echo "Cleaning Source"
+echo "Building Config"
 
-make clean mrproper
+make clean mrproper -j1000
 
 # Set config
 
-echo "Building Config"
-
-make titanium_defconfig
+make titanium_defconfig -j1000
 
 echo "Edit build version"
 
