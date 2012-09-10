@@ -704,8 +704,8 @@ static ssize_t yas_acc_debug_suspend_store(struct device *dev,
 static int bma222_fast_calibration(char layout[])
 {
     char tmp = 1;	// select x axis in cal_trigger by default
-	int power_off_after_calibration = 0;
-	struct yas_acc_private_data *data =yas_acc_get_data();
+    int power_off_after_calibration = 0;
+    struct yas_acc_private_data *data =yas_acc_get_data();
 	
     if(!yas_bma222_get_enable())
     {

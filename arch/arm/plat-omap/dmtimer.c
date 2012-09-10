@@ -257,7 +257,6 @@ static inline void ClockCycleWait(void )
 static inline u32 omap_dm_timer_read_reg(struct omap_dm_timer *timer, u32 reg)
 {
 	struct dmtimer_platform_data *pdata = timer->pdev->dev.platform_data;
-	int i = 0;
 
 	if (reg >= OMAP_TIMER_WAKEUP_EN_REG)
 		reg += pdata->func_offset;
@@ -319,7 +318,6 @@ static void omap_dm_timer_write_reg(struct omap_dm_timer *timer, u32 reg,
 						u32 value)
 {
 	struct dmtimer_platform_data *pdata = timer->pdev->dev.platform_data;
-	int i = 0;
 
 	if (reg >= OMAP_TIMER_WAKEUP_EN_REG)
 		reg += pdata->func_offset;

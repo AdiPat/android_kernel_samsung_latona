@@ -713,11 +713,9 @@ extern void check_chip_calibration(unsigned char one_touch_input_flag);
 void handle_multi_touch(uint8_t *atmel_msg)
 {
 	u16 x=0, y=0;
-	unsigned int size ;	// ryun 20100113 
-	static int check_flag=0; // ryun 20100113 	
+	unsigned int size ;	// ryun 20100113 	
 	uint8_t touch_message_flag = 0;// ryun 20100208
 	unsigned char one_touch_input_flag=0;
-	unsigned char cal_release_number_of_check=0;
 	int id;
 	int i, touch_count;
 
@@ -885,8 +883,6 @@ void read_func_for_only_single_touch(struct work_struct *work)
 //	uint8_t ret_val = MESSAGE_READ_FAILED;
 	u16 x=0, y=0;
 	u16 x480, y800, press;
-	int status;
-	u8 family_id;
 //	PRINT_FUNCTION_ENTER;
 	struct touchscreen_t *ts = container_of(work,
 					struct touchscreen_t, tsp_work);

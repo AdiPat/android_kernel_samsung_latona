@@ -2648,7 +2648,6 @@ static int vidioc_s_fmt_vid_overlay(struct file *file, void *fh,
 			struct v4l2_format *f)
 {
 	int ret = 0;
-	__s32	temp;
 	struct omap_overlay *ovl;
 	struct omapvideo_info *ovid;
 	struct omap_vout_device *vout = fh;

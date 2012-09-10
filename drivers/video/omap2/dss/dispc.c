@@ -3108,7 +3108,6 @@ static int _dispc_setup_plane(enum omap_plane plane,
 	u16 frame_height = height;
 	unsigned int field_offset = 0;
 //Change for OMAPS00239756
-	u32 fifo_high, fifo_low;
 	bool vdma = false;
 //Change for OMAPS00239756
 	if (paddr == 0)
@@ -3177,7 +3176,6 @@ static int _dispc_setup_plane(enum omap_plane plane,
 	} else {
 		/* video plane */
 
-		unsigned long fclk = 0;
 // Patch for OMAPS00227718
 /*		if (out_width < width / maxdownscale ||
 		   out_width > width * 8)

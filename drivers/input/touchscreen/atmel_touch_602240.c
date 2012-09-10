@@ -1469,14 +1469,12 @@ int set_all_config(all_config_setting config)
 }
 void atmel_touch_probe(void)
 {
-   U8 touch_chip_found = 0;
    U8 report_id, MAX_report_ID;
    U8 object_type, instance;
    U32 crc;//, stored_crc;
    uint8_t chip_reset;
-   int count;
    int i;
-   U8 version, family_id, variant, build;
+   U8 family_id, variant, build;
 #if 0 
 	/* Power config settings. */
 	gen_powerconfig_t7_config_t power_config = {0};
@@ -4661,8 +4659,7 @@ ssize_t set_write_show(struct device *dev, struct device_attribute *attr, char *
 }
 ssize_t set_write_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
 {
-	int ret, cmd_no,config_value = 0;
-	char *after;
+
 
 	printk(KERN_INFO "[TSP] %s : operate nothing\n", __FUNCTION__);
 
@@ -4844,7 +4841,6 @@ int set_tsp_for_ta_detect(int state)
 	uint16_t object_address;
 	uint8_t *tmp;
 	uint8_t status;
-	uint8_t object_size;
 
 	if(qt60224_notfound_flag == 1)
 	{

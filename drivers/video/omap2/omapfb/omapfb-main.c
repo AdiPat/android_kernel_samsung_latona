@@ -221,7 +221,6 @@ static void fill_fb_black(struct fb_info *fbi)
 	const short w = var->xres_virtual;
 	const short h = var->yres_virtual;
 	void __iomem *addr = fbi->screen_base;
-	int y, x;
 
 	if (!addr)
 		return;
