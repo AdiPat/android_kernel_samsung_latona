@@ -634,7 +634,7 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 
 static void fsa9480_read_int_register(struct work_struct *work)
 {
-	u8 interrupt1 , interrupt2, device1, device2, temp;
+	u8 interrupt1 , device1, device2, temp;
 
 	DEBUG_FSA9480("fsa9480_read_int_register function!!!!\n");
 

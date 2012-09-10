@@ -144,7 +144,6 @@ static int omap3_enter_idle(struct cpuidle_device *dev,
 	/* modified for mp3 current -- begin */
 	u32 mpu_prev,core_prev =0 ;
 	current_cx_state = *cx;
-	int requested=cx->type;
 	static int cam_deny = 0;
 
 	

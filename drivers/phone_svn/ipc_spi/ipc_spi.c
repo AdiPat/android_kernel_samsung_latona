@@ -1407,7 +1407,6 @@ static void ipc_spi_prepare_tx_data( u8 *tx_b )
 	u16 pkt_fmt_len = 0;
 	u32 pkt_len = 0;
 	u8 bof = 0, eof = 0;
-	int i;
 
 	memset( ( void * )tx_b, 0, DEF_BUF_SIZE + 4 );
 
@@ -3531,7 +3530,6 @@ err :
 extern void ( *onedram_cp_force_crash ) ( void );
 static void ipc_spi_cp_force_crash( void )
 {
-	u32 int_cmd = 0;
 	
 	printk( "[ipc_spi_cp_force_crash]\n" );
 

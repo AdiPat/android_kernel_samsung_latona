@@ -265,7 +265,6 @@ __setup("androidboot.current_panel=", setup_current_panel);
 
 static int nt35510_panel_probe(struct omap_dss_device *dssdev)
 {
-	int lcd_id1, lcd_id2;
 	printk(KERN_INFO " **** nt35510_panel_probe.\n");
 		
 	vaux4 = regulator_get( &dssdev->dev, "vaux4" );
@@ -1600,7 +1599,6 @@ void nt35510_lcd_poweroff(void)
 void nt35510_lcd_poweron(void)
 {
 
-       u8 read=0;
 #if 1	
 	omap_mux_init_signal("mcspi1_clk",OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLUP);
 	omap_mux_init_signal("mcspi1_simo",OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN);

@@ -2512,7 +2512,6 @@ int omap_voltage_scale(struct voltagedomain *voltdm)
 	struct omap_vdd_info *vdd;
 	struct plist_node *node;
 	unsigned long volt;
-	unsigned long curr_nom_volt;
 	struct omap_volt_data *vnom;
 
 	if (!voltdm || IS_ERR(voltdm)) {
