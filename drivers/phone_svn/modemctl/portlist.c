@@ -57,7 +57,7 @@ typedef struct tagHDLCFrame
 	unsigned char	m_EndMagicCode;
 } HDLCFrame_t;
 
-unsigned char get_control_infoid()
+unsigned char get_control_infoid(void)
 {
 	unsigned char s_infoid = 0;
 
@@ -74,7 +74,6 @@ unsigned char get_control_infoid()
 static int readPortFromFile(const char* path,unsigned short* portList)
 {
 	int lineNum = 0;
-	int index = 0;
 	int read_byte = 0;
 	struct file* fp = NULL;
 	char* readline = NULL;
@@ -217,7 +216,7 @@ static int activePortGet(int portType, unsigned short* portList)
 static ipc_pda_gprs_port_list_set_type port_list_packet;
 char* hdlc_frame = NULL;
 
-int TxGPRS_SetPortList()
+int TxGPRS_SetPortList(void)
 {
 	int hdlc_size;
 	char *rawdata = NULL;
@@ -286,7 +285,7 @@ int TxGPRS_SetPortList()
 	return hdlc_size;
 }
 
-void clear_portlist()
+void clear_portlist(void)
 {
 	dprintk("[%s][line:%d]\n",__func__, __LINE__);
 	

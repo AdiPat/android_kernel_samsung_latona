@@ -414,14 +414,19 @@ struct rtc {
 static void rtc_interrupt_bottom_half(struct work_struct *work)
 {
 
-unsigned long events = 0;
-	int ret = IRQ_NONE;
+	unsigned long events; // = 0;
+	int ret; // = IRQ_NONE;
 	int res;
 	u8 rd_reg;
+	events = 0;
+	ret = IRQ_NONE;
+	void* rtc;
+	
+	rtc = (void *) rtc_ins.rtc ;
 
 printk("rtc_interrupt_bottom_half \n");
 	
- void* rtc =(void *) rtc_ins.rtc ;
+ //void* rtc =(void *) rtc_ins.rtc ;
 
 #if 1
 
@@ -475,10 +480,7 @@ printk("rtc_interrupt_bottom_half \n");
 #endif
 static irqreturn_t twl_rtc_interrupt(int irq, void *rtc)
 {
-	unsigned long events = 0;
 	int ret = IRQ_NONE;
-	int res;
-	u8 rd_reg;
 #ifdef WORKQUEUE_RTC
 	static struct work_struct task;
 #endif
