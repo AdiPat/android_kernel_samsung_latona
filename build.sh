@@ -18,7 +18,7 @@ echo $vrsn > .version
 
 echo "Compiling Modules and Kernel"
 
-make -j8
+make -j128 
 
 echo "Copy modules"
 
