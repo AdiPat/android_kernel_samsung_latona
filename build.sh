@@ -18,7 +18,9 @@ echo $vrsn > .version
 
 echo "Compiling Modules and Kernel"
 
-make -j128 
+rm ../compile.log
+
+make -j128 > ../compile.log 2>&1
 
 echo "Copy modules"
 
@@ -57,9 +59,9 @@ cd ../../../
 
 rm *.zip
 
-zip -r Titanium-Kernel#$vrsn.zip META-INF system boot.img
+zip -r BETA_KERNEL#$vrsn.zip META-INF system boot.img
 
-cp Titanium-Kernel#$vrsn.zip ../../Titanium-Kernel#$vrsn.zip
+cp BETA_KERNEL#$vrsn.zip ../../BETA_KERNEL#$vrsn.zip
 
 echo "Done"
 
