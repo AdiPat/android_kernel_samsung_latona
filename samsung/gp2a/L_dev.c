@@ -212,7 +212,7 @@ void L_dev_sync_mech_init(void)
     mutex_init(&(L_dev.lock));
 }
 
-static int turn_resources_on_for_adc()
+static int turn_resources_on_for_adc(void)
 {
     int ret;
     u8 val = 0; 
