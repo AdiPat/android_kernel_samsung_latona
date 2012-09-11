@@ -220,7 +220,7 @@ typedef struct
 	int size;
 } dec_input;
 
-static dec_input touch_info[MAX_TOUCH_NUM] = {0};
+static dec_input touch_info[MAX_TOUCH_NUM] = {{0}};
 #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 static int prev_touch_count = 0;
 #endif
@@ -518,9 +518,8 @@ static ssize_t firmware_update_store(
 		const char *buf, size_t size)
 {
 	char *after;
-	g_firmware_ret = 2;
-
 	unsigned long value = simple_strtoul(buf, &after, 10);	
+	g_firmware_ret = 2;
 	printk(KERN_INFO "[TSP] %s\n", __FUNCTION__);
 
 	if ( value == 1 )	// auto update.
@@ -1096,6 +1095,9 @@ static int __init touchscreen_probe(struct platform_device *pdev)
 {
 	int ret;
 	int error = -1;
+	/* For sysfs enteries */ 
+	struct kobject *ts_kobj;
+	ts_kobj = kobject_create_and_add("touchscreen", NULL);
 //	u8 data[2] = {0,};
 
 	printk(KERN_DEBUG "[TSP] touchscreen_probe !! \n");
@@ -1182,8 +1184,7 @@ static int __init touchscreen_probe(struct platform_device *pdev)
 #endif	/* CONFIG_HAS_EARLYSUSPEND */
 
 // [[ This will create the touchscreen sysfs entry under the /sys directory
-struct kobject *ts_kobj;
-ts_kobj = kobject_create_and_add("touchscreen", NULL);
+
 	if (!ts_kobj)
 		return -ENOMEM;
 
