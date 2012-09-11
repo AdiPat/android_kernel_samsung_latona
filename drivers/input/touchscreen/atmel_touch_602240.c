@@ -791,7 +791,7 @@ uint8_t *atmel_msg;
 unsigned char g_version=0, g_build = 0, qt60224_notfound_flag=1;
 Atmel_model_type g_model = DEFAULT_MODEL;
 
-all_config_setting config_normal = { "config_normal" , 0 };
+all_config_setting config_normal = { "config_normal" , {0} };
 
 uint8_t cal_check_flag = 0u;//20100208
 
@@ -5059,7 +5059,7 @@ void set_frequency_hopping_table(int mode)
 {
 	uint16_t object_address;
 	uint8_t *tmp;
-	uint8_t status;
+	uint8_t status = 0; 
 
 	config_normal.touchscreen_config.blen = 0;
 	config_normal.touchscreen_config.tchthr = 40;
