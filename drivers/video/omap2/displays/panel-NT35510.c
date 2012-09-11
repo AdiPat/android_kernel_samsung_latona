@@ -56,13 +56,6 @@ static int current_panel = -1;	// 0:sony, 1:Hitachi(20mA) , 2:Hydis, 3:SMD, 4:So
 static int lcd_enabled = 0;
 static int is_nt35510_spi_shutdown = 0;
 
-// default setting : sony panel. 
-static u16 LCD_HBP =	10;//20; 
-static u16 LCD_HFP =	10; 
-static u16 LCD_HSW =	10; 
-static u16 LCD_VBP =	9;// 10;//8; 
-static u16 LCD_VFP =	4;// 14;//6; 
-static u16 LCD_VSW =	2; 
 
 #define GPIO_LEVEL_LOW   0
 #define GPIO_LEVEL_HIGH  1
@@ -71,9 +64,7 @@ static u16 LCD_VSW =	2;
 #define POWER_ON	1	// set in lcd_poweron function
 
 static struct spi_device *nt35510lcd_spi;
-    
 
-static atomic_t lcd_power_state = ATOMIC_INIT(POWER_ON);	// default is power on because bootloader already turn on LCD.
 static atomic_t ldi_power_state = ATOMIC_INIT(POWER_ON);	// ldi power state
 
 int g_lcdlevel = 0x6C;
@@ -115,7 +106,7 @@ void nt35510_remove_power_state_monitor(notification_handler handler);
 EXPORT_SYMBOL(nt35510_add_power_state_monitor);
 EXPORT_SYMBOL(nt35510_remove_power_state_monitor);
 
-static void nt35510_notify_power_state_changed(void);
+//static void nt35510_notify_power_state_changed(void);
 static void aat1402_set_brightness(void);
 //extern int omap34xx_pad_set_configs(struct pin_config *pin_configs, int n);
 extern int omap34xx_pad_set_config_lcd(u16,u16);
@@ -127,14 +118,6 @@ extern int omap34xx_pad_set_config_lcd(u16,u16);
 #define TWL4030_VPLL2_DEV_GRP           0x33
 #define TWL4030_VPLL2_DEDICATED       	0x36
 
-
-static struct pin_config  omap34xx_lcd_pins[] = {
-
-};
-
-static struct pin_config  omap34xx_lcd_off_pins[] = {
-
-};
 
 /*
     PANEL TIMINGS
@@ -242,19 +225,6 @@ void nt35510_remove_power_state_monitor(notification_handler handler)
 		}
 	}
 }
-	
-static void nt35510_notify_power_state_changed(void)
-{
-	int index = 0;
-	for(; index < MAX_NOTIFICATION_HANDLER; index++)
-	{
-		if(power_state_change_handler[index] != NULL)
-		{
-			power_state_change_handler[index](atomic_read(&lcd_power_state));
-		}
-	}
-
-}
 
 static __init int setup_current_panel(char *opt)
 {
@@ -280,7 +250,7 @@ static int nt35510_panel_probe(struct omap_dss_device *dssdev)
 	//MLCD pin set to OUTPUT.
 	if (gpio_request(OMAP_GPIO_MLCD_RST, "MLCD_RST") < 0) {
 		printk(KERN_ERR "\n FAILED TO REQUEST GPIO %d \n", OMAP_GPIO_MLCD_RST);
-		return;
+		return 0;
 	}
 	gpio_direction_output(OMAP_GPIO_MLCD_RST, 1);
 
@@ -468,22 +438,6 @@ static void spi1writedata(u8 data)
 	datas= 0x0100|data;
 	spi_write(nt35510lcd_spi,(unsigned char*)&datas,2);
 
-	udelay(100);
-	udelay(100);
-}
-
-
-static void spi1write(u8 index, u8 data)
-{
-	volatile unsigned short cmd = 0;
-	volatile unsigned short datas=0;
-
-	cmd = 0x0000 | index;
-	datas = 0x0100 | data;
-	
-	spi_write(nt35510lcd_spi,(unsigned char*)&cmd,2);
-	udelay(100);
-	spi_write(nt35510lcd_spi,(unsigned char *)&datas,2);
 	udelay(100);
 	udelay(100);
 }
@@ -1662,7 +1616,7 @@ static DEVICE_ATTR(lcd_power, 0664,
 
 // [[ backlight control 
 static int current_intensity = 108;	// DEFAULT BRIGHTNESS
-static DEFINE_SPINLOCK(aat1402_bl_lock);
+//static DEFINE_SPINLOCK(aat1402_bl_lock);
 
 static void aat1402_set_brightness(void)
 {
@@ -1735,7 +1689,7 @@ static int aat1402_bl_set_intensity(struct backlight_device *bd)
 //	int retry_count=10;
 	
 	if( intensity < 0 || intensity > 255 )
-		return;
+		return 0;
 /*
 	while(atomic_read(&ldi_power_state)==POWER_OFF) 
 	{
@@ -1746,7 +1700,7 @@ static int aat1402_bl_set_intensity(struct backlight_device *bd)
 */	
 	current_intensity = intensity;
 	if(atomic_read(&ldi_power_state)==POWER_OFF) 
-		return;
+		return 0;
 	aat1402_set_brightness();
 
 	return 0;
@@ -1761,12 +1715,14 @@ static struct backlight_ops aat1402_bl_ops = {
 static int nt35510_spi_probe(struct spi_device *spi)
 {
     struct backlight_properties props;
-     int status =0;
-	 int ret;
-		
+    int status =0;
+    int ret;
+    struct backlight_device *bd;
+	
 	printk(KERN_INFO " **** nt35510_spi_probe.\n");
 	nt35510lcd_spi = spi;
 	nt35510lcd_spi->mode = SPI_MODE_0;
+	
 	nt35510lcd_spi->bits_per_word = 9 ;
 
 	printk(" nt35510lcd_spi->chip_select = %x\t, mode = %x\n", nt35510lcd_spi->chip_select,  nt35510lcd_spi->mode);
@@ -1777,7 +1733,7 @@ static int nt35510_spi_probe(struct spi_device *spi)
 	
 	omap_dss_register_driver(&nt35510_driver);
 //	led_classdev_register(&spi->dev, &nt35510_backlight_led);
-	struct backlight_device *bd;
+	
 	bd = backlight_device_register("omap_bl", &spi->dev, NULL, &aat1402_bl_ops, &props);
 	bd->props.max_brightness = 255;
 	bd->props.brightness = 125;
