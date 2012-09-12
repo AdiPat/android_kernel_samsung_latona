@@ -434,19 +434,6 @@ static struct regulator_init_data omap_board_aux2 = {
 
 
 /* VSIM for OMAP VDD_MMC1A (i/o for DAT4..DAT7) */
-static struct regulator_init_data omap_board_vsim = {
-	.constraints = {
-		.min_uV			= 1800000,
-		.max_uV			= 3000000,
-		.valid_modes_mask	= REGULATOR_MODE_NORMAL
-					| REGULATOR_MODE_STANDBY,
-		.valid_ops_mask		= REGULATOR_CHANGE_VOLTAGE
-					| REGULATOR_CHANGE_MODE
-					| REGULATOR_CHANGE_STATUS,
-	},
-	.num_consumer_supplies  = 1,
-	.consumer_supplies      = &omap_board_vsim_supply,
-};
 
 static struct omap2_hsmmc_info mmc[] __initdata = {
 	{
@@ -515,19 +502,6 @@ static struct regulator_init_data omap_board_aux4 = {
 	.consumer_supplies = &omap_board_vaux4_supply,
 };
 
-/* VPLL2 for LCD */
-static struct regulator_init_data board_vpll2 = {
-	.constraints = {
-			.min_uV = 1800000,
-			.max_uV = 1800000,
-			.boot_on = true,
-			.valid_modes_mask = REGULATOR_MODE_NORMAL | REGULATOR_MODE_STANDBY,
-			.valid_ops_mask = REGULATOR_CHANGE_MODE | REGULATOR_CHANGE_STATUS,
-			},
-	.num_consumer_supplies = 1,
-	.consumer_supplies = &omap_board_vpll2_supply,
-};
-
 static struct __initdata twl4030_power_data latona_t2scripts_data;
 
 
@@ -577,11 +551,6 @@ static struct omap_uart_config board_uart_config __initdata = {
 #else
     .enabled_uarts = ((1 << 0) | (1 << 1)),
 #endif
-};
-
-static struct omap_board_config_kernel board_config[] __initdata = {
-    {OMAP_TAG_UART, &board_uart_config},
-    {OMAP_TAG_LCD, &board_lcd_config},  //ZEUS_LCD
 };
 
 
