@@ -189,7 +189,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
 export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= arm
-CROSS_COMPILE  ?= /home/aditya/Toolchain/arm-eabi-4.4.3/bin/arm-eabi-
+CROSS_COMPILE  ?= /home/aditya/Toolchain/arm-eabi-linaro-4.6.2/bin/arm-eabi-
 
 
 # Architecture as present in compile.h
@@ -583,6 +583,11 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
 
 # conserve stack if available
 KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
+
+# Disable -Wunused-but-set-variable because it doesn't make much sense
+# Throws too many false positives 
+
+CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
 
 # Add user supplied CPPFLAGS, AFLAGS and CFLAGS as the last assignments
 # But warn user when we do so
