@@ -61,14 +61,13 @@
 #include "pm.h"
 #include "sdrc.h"
 
-static struct clk *mbox_ick_handle;
 static int android_suspend = 0 ;
 
 /* modified for mp3 current -- begin */
 int audio_on = 0 ;
 /* modified for mp3 current -- end */
 // SAMSUNG egkim [
-extern void omap_acknowledge_interrupts();
+extern void omap_acknowledge_interrupts(void);
 static spinlock_t fleeting_lock = SPIN_LOCK_UNLOCKED;
 // ]
 /* Scratchpad offsets */

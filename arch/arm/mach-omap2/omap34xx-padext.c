@@ -144,8 +144,8 @@ EXPORT_SYMBOL(omap3430_pad_set_padoff);
 int omap34xx_pad_set_config(struct pin_config *pin_config)
 {
 	unsigned long flags;
-	u16 pad_pin;
-	u16  pad_val;
+	u16 pad_pin = 0;
+	u16  pad_val = 0;
 
 	spin_lock_irqsave(&pad_spin_lock, flags);
 
@@ -181,7 +181,7 @@ int omap34xx_pad_set_configs(struct pin_config *pin_configs, int n)
 {
 	unsigned long flags;
 	u16 pad_pin;
-	u16  pad_val;
+	u16  pad_val = 0;
 	int i=0;
 
 	if (n <= 0)

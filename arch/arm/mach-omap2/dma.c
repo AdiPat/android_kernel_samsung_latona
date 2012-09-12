@@ -192,7 +192,6 @@ static inline void omap2_disable_lnk(int lch)
 static void dma_ocpsysconfig_errata(u32 *sys_cf, bool flag)
 {
 	u32 l;
-
 	/*
 	 * DMA Errata:
 	 * Special programming model needed to disable DMA before end of block

@@ -970,9 +970,9 @@ static struct resource omap_vout_resource[2] = {
 
 #ifdef CONFIG_PM
 struct vout_platform_data omap_vout_data = {
-	.set_min_bus_tput = omap_pm_set_min_bus_tput,
-	.set_max_mpu_wakeup_lat =  omap_pm_set_max_mpu_wakeup_lat,
-	.set_cpu_freq = omap_pm_cpu_set_freq,
+	.set_min_bus_tput = &omap_pm_set_min_bus_tput,
+	.set_max_mpu_wakeup_lat =  &omap_pm_set_max_mpu_wakeup_lat,
+	.set_cpu_freq = &omap_pm_cpu_set_freq,
 };
 #endif
 
