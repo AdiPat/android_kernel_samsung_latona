@@ -1133,6 +1133,12 @@ enum v4l2_colorfx {
 #define V4L2_CID_AUTOBRIGHTNESS			(V4L2_CID_BASE+32)
 #define V4L2_CID_BAND_STOP_FILTER		(V4L2_CID_BASE+33)
 
+/* Redefined , lets undefine them first */
+
+#undef V4L2_CID_ROTATE
+#undef V4L2_CID_BG_COLOR
+#undef V4L2_CID_LASTP1 /* Redefined @line-1212 */
+
 #define V4L2_CID_ROTATE				(V4L2_CID_BASE+34)
 #define V4L2_CID_BG_COLOR			(V4L2_CID_BASE+35)
 #define V4L2_CID_CHROMA_GAIN                    (V4L2_CID_BASE+36)
