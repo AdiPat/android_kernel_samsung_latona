@@ -15,6 +15,7 @@
 #include <linux/bitops.h>
 #include <linux/memblock.h>
 
+#define MEMBLOCK_REAL_LIMIT     0
 #define MEMBLOCK_ALLOC_ANYWHERE	0
 
 struct memblock memblock;
