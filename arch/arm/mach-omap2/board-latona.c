@@ -47,6 +47,7 @@
 #include <plat/timer-gp.h>
 #include <plat/mux.h>
 #include <plat/display.h>
+#include "omap_ion.h"
 
 #include "mux.h"
 //#include "sdram-hynix-h8mbx00u0mer-0em.h"
@@ -491,7 +492,7 @@ static void __init omap_board_init(void)
 #endif
 	omap_voltage_init_vc(&vc_config);
 #endif
-
+	omap_register_ion();
 	sec_common_init_post();
 }
 
