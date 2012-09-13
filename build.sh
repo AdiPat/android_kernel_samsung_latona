@@ -20,7 +20,7 @@ echo "Compiling Modules and Kernel"
 
 rm ../compile.log
 
-make -j128 > ../compile.log 2>&1
+make -j84 > ../compile.log 2>&1
 
 echo "Copy modules"
 

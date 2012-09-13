@@ -368,12 +368,12 @@ void dss_opt_clock_disable()
 		clk_disable(core.dss_96m_fck);
 }
 
-int hdmi_opt_clock_enable()
+int hdmi_opt_clock_enable(void)
 {
 	return clk_enable(core.dss_96m_fck);
 }
 
-void hdmi_opt_clock_disable()
+void hdmi_opt_clock_disable(void)
 {
 	clk_disable(core.dss_96m_fck);
 }
