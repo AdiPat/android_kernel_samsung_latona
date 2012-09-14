@@ -14,6 +14,9 @@
  * GNU General Public License for more details.
  */
 
+
+#define PLAT_PHYS_OFFSET		UL(0x10000000)
+
 #ifndef __OMAP_RAM_CONSOLE_H
 #define __OMAP_RAM_CONSOLE_H
 
@@ -21,13 +24,7 @@
 #define OMAP_RAM_CONSOLE_START_DEFAULT	(PLAT_PHYS_OFFSET + SZ_512M)
 #define OMAP_RAM_CONSOLE_SIZE_DEFAULT	SZ_2M
 
-#ifdef CONFIG_OMAP_RAM_CONSOLE
 extern int omap_ram_console_init(phys_addr_t phy_addr, size_t size);
-#else
-static inline int omap_ram_console_init(phys_addr_t phy_addr, size_t size)
-{
-	return 0;
-}
-#endif /* CONFIG_OMAP_RAM_CONSOLE */
+
 
 #endif
