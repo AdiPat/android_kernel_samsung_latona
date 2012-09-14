@@ -47,6 +47,14 @@
 struct omap_board_config_kernel *omap_board_config;
 int omap_board_config_size;
 
+void __init omap_reserve(void)
+{
+	omapfb_reserve_sdram_memblock();
+	omap_vram_reserve_sdram_memblock();
+	omap_dsp_reserve_sdram_memblock();
+	omap_ipu_reserve_sdram_memblock();
+}
+
 static const void *get_config(u16 tag, size_t len, int skip, size_t *len_out)
 {
 	struct omap_board_config_kernel *kinfo = NULL;
