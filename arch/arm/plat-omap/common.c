@@ -16,6 +16,7 @@
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/console.h>
+#include <linux/omapfb.h>
 #include <linux/serial.h>
 #include <linux/tty.h>
 #include <linux/serial_8250.h>

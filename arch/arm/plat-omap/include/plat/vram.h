@@ -39,6 +39,7 @@ extern void omap_vram_set_sdram_vram(u32 size, u32 start);
 extern void omap_vram_set_sram_vram(u32 size, u32 start);
 
 extern void omap_vram_reserve_sdram(void);
+extern void omap_vram_reserve_sdram_memblock(void);
 extern unsigned long omap_vram_reserve_sram(unsigned long sram_pstart,
 					    unsigned long sram_vstart,
 					    unsigned long sram_size,
@@ -49,6 +50,7 @@ static inline void omap_vram_set_sdram_vram(u32 size, u32 start) { }
 static inline void omap_vram_set_sram_vram(u32 size, u32 start) { }
 
 static inline void omap_vram_reserve_sdram(void) { }
+static inline void omap_vram_reserve_sdram_memblock(void) { }
 static inline unsigned long omap_vram_reserve_sram(unsigned long sram_pstart,
 					    unsigned long sram_vstart,
 					    unsigned long sram_size,

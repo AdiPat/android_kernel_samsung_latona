@@ -257,6 +257,10 @@ struct omapfb_platform_data {
 extern void omapfb_set_platform_data(struct omapfb_platform_data *data);
 extern void omapfb_set_ctrl_platform_data(void *pdata);
 extern void omapfb_reserve_sdram(void);
+extern void omapfb_reserve_sdram_memblock(void); /* Because our old source does not use _memblock 
+						    and we cannot change it since it could affect
+						    other Kernel parameters, so hence we define it 
+					            as a seperate prototype */
 extern unsigned long omapfb_reserve_sram(unsigned long sram_pstart,
 				  unsigned long sram_vstart,
 				  unsigned long sram_size,

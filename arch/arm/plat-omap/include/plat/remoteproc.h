@@ -129,6 +129,12 @@ struct omap_rproc_reg_event_args {
 	u32 event;
 };
 
+#if defined(CONFIG_OMAP_REMOTE_PROC)
+void omap_ipu_reserve_sdram_memblock(void);
+#else
+static inline void omap_ipu_reserve_sdram_memblock(void) { }
+#endif
+
 extern int rproc_start(struct omap_rproc *rproc, const void __user *arg);
 extern int rproc_stop(struct omap_rproc *rproc);
 extern int rproc_sleep(struct omap_rproc *rproc);
