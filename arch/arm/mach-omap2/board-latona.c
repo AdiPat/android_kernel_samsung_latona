@@ -484,7 +484,6 @@ static void __init omap_board_init(void)
 	omap_board_display_init(OMAP_DSS_VENC_TYPE_COMPOSITE);
 	usb_uhhtll_init(&usbhs_pdata);
 	sr_class1p5_init();
-
 #ifdef CONFIG_PM
 #ifdef CONFIG_TWL4030_CORE
 	omap_voltage_register_pmic(&omap_pmic_core, "core");
@@ -492,6 +491,7 @@ static void __init omap_board_init(void)
 #endif
 	omap_voltage_init_vc(&vc_config);
 #endif
+	omap_ion_init();
 	omap_register_ion();
 	sec_common_init_post();
 }
