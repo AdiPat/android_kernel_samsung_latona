@@ -34,6 +34,7 @@
 #include <linux/gpio.h>
 #include <linux/bootmem.h>
 #include <linux/reboot.h>
+#include <linux/memblock.h>
 
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -65,6 +66,7 @@
 #ifdef CONFIG_OMAP_MUX
 extern struct omap_board_mux *sec_board_mux_ptr;
 extern struct omap_board_mux *sec_board_wk_mux_ptr;
+static void __init latona_reserve(void);
 #else
 #define sec_board_mux_ptr		NULL
 #define sec_board_wk_mux_ptr		NULL
@@ -491,9 +493,18 @@ static void __init omap_board_init(void)
 #endif
 	omap_voltage_init_vc(&vc_config);
 #endif
-	omap_ion_init();
 	omap_register_ion();
 	sec_common_init_post();
+}
+
+static void __init latona_reserve(void)
+{
+
+	memblock_remove(OMAP3_PHYS_ADDR_SMC_MEM, PHYS_ADDR_SMC_SIZE);
+#ifdef CONFIG_ION_OMAP
+	omap_ion_init();
+#endif
+	omap_reserve();
 }
 
 static void __init omap_board_fixup(struct machine_desc *desc,
@@ -593,6 +604,7 @@ MACHINE_START(LATONA, "LATONA")
     .io_pg_offst = ((0xfa000000) >> 18) & 0xfffc,
     .boot_params = 0x80000100,
     .fixup = omap_board_fixup,
+    .reserve = latona_reserve, 
     .map_io = omap_board_map_io,
     .init_irq = omap_board_init_irq,
     .init_machine = omap_board_init,
