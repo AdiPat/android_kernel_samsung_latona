@@ -35,6 +35,10 @@
 #include <plat/mux.h>
 #include <plat/fpga.h>
 #include <plat/serial.h>
+#include <plat/common.h>
+#include <plat/vram.h>
+#include <plat/dsp.h>
+#include <plat/remoteproc.h>
 
 #include <plat/clock.h>
 
