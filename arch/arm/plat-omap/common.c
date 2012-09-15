@@ -17,6 +17,7 @@
 #include <linux/delay.h>
 #include <linux/console.h>
 #include <linux/omapfb.h>
+#include <linux/memblock.h>
 #include <linux/serial.h>
 #include <linux/tty.h>
 #include <linux/serial_8250.h>
@@ -54,8 +55,8 @@ int omap_board_config_size;
 
 void __init omap_reserve(void)
 {
-	omapfb_reserve_sdram_memblock();
-	omap_vram_reserve_sdram_memblock();
+	omapfb_reserve_sdram();
+	omap_vram_reserve_sdram();
 	omap_dsp_reserve_sdram_memblock();
 	omap_ipu_reserve_sdram_memblock();
 }
