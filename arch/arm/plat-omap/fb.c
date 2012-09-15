@@ -178,54 +178,43 @@ static int check_fbmem_region(int region_idx, struct omapfb_mem_region *rg,
  */
 void __init omapfb_reserve_sdram(void)
 {
-	unsigned long reserved = 0;
-	int i;
+	struct bootmem_data	*bdata;
+	unsigned long		sdram_start, sdram_size;
+	unsigned long		reserved;
+	int			i;
 
 	if (config_invalid)
 		return;
 
+	bdata = NODE_DATA(0)->bdata;
+	sdram_start = bdata->node_min_pfn << PAGE_SHIFT;
+	sdram_size = (bdata->node_low_pfn << PAGE_SHIFT) - sdram_start;
+	reserved = 0;
 	for (i = 0; ; i++) {
-		struct omapfb_mem_region rg;
+		struct omapfb_mem_region	rg;
 
 		if (get_fbmem_region(i, &rg) < 0)
 			break;
-
 		if (i == OMAPFB_PLANE_NUM) {
-			pr_err("Extraneous FB mem configuration entries\n");
+			printk(KERN_ERR
+				"Extraneous FB mem configuration entries\n");
 			config_invalid = 1;
 			return;
 		}
-
 		/* Check if it's our memory type. */
-		if (rg.type != OMAPFB_MEMTYPE_SDRAM)
+		if (set_fbmem_region_type(&rg, OMAPFB_MEMTYPE_SDRAM,
+				          sdram_start, sdram_size) < 0 ||
+		    (rg.type != OMAPFB_MEMTYPE_SDRAM))
 			continue;
-
-		/* Check if the region falls within SDRAM */
-		if (rg.paddr && !valid_sdram(rg.paddr, rg.size))
-			continue;
-
-		if (rg.size == 0) {
-			pr_err("Zero size for FB region %d\n", i);
+		BUG_ON(omapfb_config.mem_desc.region[i].size);
+		if (check_fbmem_region(i, &rg, sdram_start, sdram_size) < 0) {
 			config_invalid = 1;
 			return;
 		}
-
 		if (rg.paddr) {
-			if (reserve_sdram(rg.paddr, rg.size)) {
-				pr_err("Trying to use reserved memory for FB region %d\n",
-					i);
-				config_invalid = 1;
-				return;
-			}
+			reserve_bootmem(rg.paddr, rg.size, BOOTMEM_DEFAULT);
 			reserved += rg.size;
 		}
-
-		if (omapfb_config.mem_desc.region[i].size) {
-			pr_err("FB region %d already set\n", i);
-			config_invalid = 1;
-			return;
-		}
-
 		omapfb_config.mem_desc.region[i] = rg;
 		configured_regions++;
 	}
