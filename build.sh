@@ -6,7 +6,7 @@ make clean mrproper -j1000
 
 # Set config
 
-make titanium_defconfig -j1000
+make latona_debug_defconfig -j1000
 
 echo "Edit build version"
 
