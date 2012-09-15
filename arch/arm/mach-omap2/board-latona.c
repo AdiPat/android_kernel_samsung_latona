@@ -497,6 +497,7 @@ static void __init omap_board_init(void)
 	sec_common_init_post();
 }
 
+#ifdef CONFIG_LATONA_EXPERIMENTAL
 static void __init latona_reserve(void)
 {
 
@@ -506,6 +507,7 @@ static void __init latona_reserve(void)
 #endif
 	omap_reserve();
 }
+#endif 
 
 static void __init omap_board_fixup(struct machine_desc *desc,
 				    struct tag *tags, char **cmdline,
@@ -604,7 +606,9 @@ MACHINE_START(LATONA, "LATONA")
     .io_pg_offst = ((0xfa000000) >> 18) & 0xfffc,
     .boot_params = 0x80000100,
     .fixup = omap_board_fixup,
-    .reserve = latona_reserve, 
+#ifdef CONFIG_LATONA_EXPERIMENTAL
+    .reserve = latona_reserve,
+#endif  
     .map_io = omap_board_map_io,
     .init_irq = omap_board_init_irq,
     .init_machine = omap_board_init,
