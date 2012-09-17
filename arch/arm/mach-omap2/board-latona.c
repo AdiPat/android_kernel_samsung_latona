@@ -500,7 +500,7 @@ static void __init omap_board_init(void)
 #ifdef CONFIG_LATONA_EXPERIMENTAL
 static void __init latona_reserve(void)
 {
-
+	printk("******* Initializing latona_reserve ************ \n");
 	memblock_remove(OMAP3_PHYS_ADDR_SMC_MEM, PHYS_ADDR_SMC_SIZE);
 #ifdef CONFIG_ION_OMAP
 	omap_ion_init();
