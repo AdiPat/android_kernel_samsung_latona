@@ -6,7 +6,7 @@ make clean mrproper -j1000
 
 # Set config
 
-make latona_debug_defconfig -j1000
+make titanium_defconfig -j1000
 
 echo "Edit build version"
 
@@ -16,15 +16,21 @@ echo $vrsn > .version
 
 # Make modules
 
-echo "Compiling Modules and Kernel"
+rm *.log
 
-rm ../compile.log
+echo "Compiling Modules"
 
-make -j84 > ../compile.log 2>&1
+make -j84 modules > ../compile-module.log 2>&1
 
 echo "Copy modules"
 
 find -name '*.ko' -exec cp -av {} ../tools/out/system/lib/modules/ \;
+
+echo "Building zImage" 
+
+make clean
+
+make -j84 zImage > ../compile-zImage.log 2>&1
 
 echo "Repacking the Kernel now"
 
