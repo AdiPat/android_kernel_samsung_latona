@@ -126,6 +126,8 @@ static struct wake_lock P_sensor_wake_lock;
 /*****************************************************************************/
 
 
+static u32 g_illum_lvl;
+
 /*module param: light sensor's illuminance level table*/
 u32 L_table [L_MAX_LVLS*5 + 1] = 
 {
@@ -170,6 +172,38 @@ static void P_waitq_init(void)
 	init_waitqueue_head( &(P_waitq.waitq) );
 	INIT_LIST_HEAD( &(P_waitq.list) );
 
+	trace_out();
+}
+
+static void P_waitq_list_insert_proc( P_fpriv_data_t *fpriv )
+{
+	trace_in();
+	mutex_lock( &(P_waitq.list_lock) );
+	list_add_tail(&(fpriv->node), &(P_waitq.list));
+	mutex_unlock( &(P_waitq.list_lock) );
+	trace_out();
+}
+
+static void P_waitq_prepare_to_wait( P_fpriv_data_t *fpriv )
+{
+	trace_in();
+	prepare_to_wait(&(P_waitq.waitq), &(fpriv->waitq_entry), TASK_INTERRUPTIBLE);
+	trace_out();
+}
+
+static void P_waitq_list_remove_proc( P_fpriv_data_t *fpriv )
+{
+	trace_in();
+	mutex_lock( &(P_waitq.list_lock) );
+	list_del_init( &(fpriv->node) );
+	mutex_unlock( &(P_waitq.list_lock) );
+	trace_out();
+}
+
+static void P_waitq_finish_wait( P_fpriv_data_t *fpriv )
+{
+	trace_in();
+	finish_wait(&(P_waitq.waitq), &(fpriv->waitq_entry));
 	trace_out();
 }
 

@@ -212,7 +212,7 @@ void L_dev_sync_mech_init(void)
     mutex_init(&(L_dev.lock));
 }
 
-static int turn_resources_on_for_adc(void)
+static int turn_resources_on_for_adc()
 {
     int ret;
     u8 val = 0; 
@@ -673,6 +673,7 @@ static void L_dev_work_func (struct work_struct *unused)
     debug("[light] L_dev_work_func(), L_dev.saved_polling_state= %d\n", L_dev.saved_polling_state);
     if( !(L_dev.saved_polling_state) )
     {
+        int adc_level = 0;
 #ifdef CONFIG_FSA9480_NOTIFY_USB_CONNECTION_STATE        
         int adc_index = usb_connection_state ? 1 : 2;   /* To choose adc value from the table according the state of USB connection */
 #else

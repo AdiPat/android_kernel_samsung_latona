@@ -788,6 +788,7 @@ int musb_module_reset(void)
        struct resource *iomem;
        void __iomem    *base;
        int ret = 0;
+       u32 val;
 
        if(oh){
                pdev = &oh->od->pdev;

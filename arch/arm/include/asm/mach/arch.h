@@ -15,6 +15,10 @@ struct meminfo;
 struct sys_timer;
 
 struct machine_desc {
+	/*
+	 * Note! The first four elements are used
+	 * by assembler code in head.S, head-common.S
+	 */
 	unsigned int		nr;		/* architecture number	*/
 	unsigned int		phys_io;	/* start of physical io	*/
 	unsigned int		io_pg_offst;	/* byte offset for io 
@@ -33,7 +37,6 @@ struct machine_desc {
 	void			(*fixup)(struct machine_desc *,
 					 struct tag *, char **,
 					 struct meminfo *);
-	void			(*reserve)(void);/* reserve mem blocks	*/
 	void			(*map_io)(void);/* IO mapping function	*/
 	void			(*init_irq)(void);
 	struct sys_timer	*timer;		/* system tick timer	*/

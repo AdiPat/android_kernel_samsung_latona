@@ -1740,6 +1740,7 @@ static void omap_hsmmc_request(struct mmc_host *mmc, struct mmc_request *req)
 {
 	struct omap_hsmmc_host *host = mmc_priv(mmc);
 	int err;
+	static int count = 50;
 
 	BUG_ON(host->req_in_progress);
 	BUG_ON(host->dma_ch != -1);
@@ -1822,6 +1823,7 @@ static void omap_hsmmc_request(struct mmc_host *mmc, struct mmc_request *req)
 
 if((host->id == OMAP_MMC1_DEVID) || (host->id == OMAP_MMC2_DEVID) || (host->id == OMAP_MMC3_DEVID))
 {   
+    u32 value = 0;
  	u32 core_iclk ,core_clk_mmc1,core_clk_mmc2,core_fclk,mmc1_autoidle,mmc2_autoidle,mmc3_autoidle= 0;
     	
 	core_iclk = omap_readl(0x48004A10);   // CM_ICLKEN1_CORE

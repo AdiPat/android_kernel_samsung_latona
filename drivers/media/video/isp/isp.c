@@ -772,6 +772,7 @@ int isp_configure_interface(struct device *dev,
 	
 	struct isp_device *isp = dev_get_drvdata(dev);
 	u32 ispctrl_val = isp_reg_readl(dev, OMAP3_ISP_IOMEM_MAIN, ISP_CTRL);
+	int r;
 
 	isp->config = config;
 

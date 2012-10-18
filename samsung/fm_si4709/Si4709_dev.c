@@ -2486,6 +2486,7 @@ static int i2c_read( u8 reg )
 	int msglen = 0, ret = 0;
 #if defined(CONFIG_FMRADIO_USE_GPIO_I2C)
 	OMAP_GPIO_I2C_RD_DATA i2c_rd_param;
+	u8 reg_addr_0 = 0x0;
 #endif	
 
 	for(idx = 0; idx < NUM_OF_REGISTERS * 2; idx++)

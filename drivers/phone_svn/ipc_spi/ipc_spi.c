@@ -55,7 +55,6 @@
 #include <linux/irq.h>
 
 #include <linux/workqueue.h>
-#include <linux/wakelock.h>
 
 
 #define DRVNAME "onedram"
@@ -101,8 +100,6 @@ enum {
 
 #define MAX_BUF_SIZE				2044
 #define DEF_BUF_SIZE				MAX_BUF_SIZE
-
-#define DEFAULT_ISR_WAKE_TIME	(HZ/2)
 
 static struct spi_device *p_ipc_spi = NULL;
 
@@ -167,8 +164,6 @@ struct ipc_spi {
 
 	int irq;
 	struct tasklet_struct tasklet;
-
-	struct wake_lock wlock;
 
 	struct completion comp;
 	atomic_t ref_sem;
@@ -573,8 +568,6 @@ static irqreturn_t ipc_spi_irq_handler( int irq, void *data ) // SRDY Rising EDG
 
 	disable_irq_nosync( od->irq );
 	dev_dbg( od->dev, "(%d) disable irq.\n", __LINE__ );
-
-	wake_lock_timeout(&od->wlock, DEFAULT_ISR_WAKE_TIME);
 
 #if 0
 	struct list_head *l;
@@ -1407,6 +1400,7 @@ static void ipc_spi_prepare_tx_data( u8 *tx_b )
 	u16 pkt_fmt_len = 0;
 	u32 pkt_len = 0;
 	u8 bof = 0, eof = 0;
+	int i;
 
 	memset( ( void * )tx_b, 0, DEF_BUF_SIZE + 4 );
 
@@ -3530,6 +3524,7 @@ err :
 extern void ( *onedram_cp_force_crash ) ( void );
 static void ipc_spi_cp_force_crash( void )
 {
+	u32 int_cmd = 0;
 	
 	printk( "[ipc_spi_cp_force_crash]\n" );
 
@@ -3616,10 +3611,6 @@ static int __devinit ipc_spi_platform_probe( struct platform_device *pdev )
 	_init_data(od);
 
 	pdata->cfg_gpio();
-
-	/* make wake lock for SRDY isr event
-	 * to prevent to sleep before run thread */
-	wake_lock_init(&od->wlock, WAKE_LOCK_SUSPEND, "ipc_spi");
 
 	tasklet_init( &od->tasklet, do_spi_tasklet, ( unsigned long )od );
 

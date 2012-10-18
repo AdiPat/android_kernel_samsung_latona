@@ -221,6 +221,7 @@ static void fill_fb_black(struct fb_info *fbi)
 	const short w = var->xres_virtual;
 	const short h = var->yres_virtual;
 	void __iomem *addr = fbi->screen_base;
+	int y, x;
 
 	if (!addr)
 		return;
@@ -2050,9 +2051,9 @@ void suspend(struct early_suspend *h)
 	struct suspend_info *info = container_of(h, struct suspend_info,
 						early_suspend);
 	struct fb_info *fbi = info->fbi;
-	//struct omapfb_info *ofbi = FB2OFB(fbi);
-	//struct omapfb2_device *fbdev = ofbi->fbdev;
-	//struct omap_dss_device *display = fb2display(fbi);
+	struct omapfb_info *ofbi = FB2OFB(fbi);
+	struct omapfb2_device *fbdev = ofbi->fbdev;
+	struct omap_dss_device *display = fb2display(fbi);
 
 /* FIXME: Is it only for AMOLED devices? */
 #ifdef CONFIG_MACH_OMAP_SAMSUNG
@@ -2075,9 +2076,9 @@ void resume(struct early_suspend *h)
 	struct suspend_info *info = container_of(h, struct suspend_info,
 						early_suspend);
 	struct fb_info *fbi = info->fbi;
-	//struct omapfb_info *ofbi = FB2OFB(fbi);
-	//struct omapfb2_device *fbdev = ofbi->fbdev;
-	//struct omap_dss_device *display = fb2display(fbi);
+	struct omapfb_info *ofbi = FB2OFB(fbi);
+	struct omapfb2_device *fbdev = ofbi->fbdev;
+	struct omap_dss_device *display = fb2display(fbi);
 
 	/* TODO: Fix PM later */
 	/* omapfb_vrfb_resume_all(fbdev);*/

@@ -19,8 +19,7 @@
  * Modified by paladin in Samsung Electronics
  */
 
-#include <linux/videodev2.h>
-#include <media/v4l2-int-device.h>
+#include<linux/videodev2.h>
 
 
 

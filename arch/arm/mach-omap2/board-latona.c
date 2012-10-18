@@ -34,7 +34,6 @@
 #include <linux/gpio.h>
 #include <linux/bootmem.h>
 #include <linux/reboot.h>
-#include <linux/memblock.h>
 
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -48,7 +47,6 @@
 #include <plat/timer-gp.h>
 #include <plat/mux.h>
 #include <plat/display.h>
-#include "omap_ion.h"
 
 #include "mux.h"
 //#include "sdram-hynix-h8mbx00u0mer-0em.h"
@@ -66,7 +64,6 @@
 #ifdef CONFIG_OMAP_MUX
 extern struct omap_board_mux *sec_board_mux_ptr;
 extern struct omap_board_mux *sec_board_wk_mux_ptr;
-static void __init latona_reserve(void);
 #else
 #define sec_board_mux_ptr		NULL
 #define sec_board_wk_mux_ptr		NULL
@@ -486,6 +483,7 @@ static void __init omap_board_init(void)
 	omap_board_display_init(OMAP_DSS_VENC_TYPE_COMPOSITE);
 	usb_uhhtll_init(&usbhs_pdata);
 	sr_class1p5_init();
+
 #ifdef CONFIG_PM
 #ifdef CONFIG_TWL4030_CORE
 	omap_voltage_register_pmic(&omap_pmic_core, "core");
@@ -493,21 +491,9 @@ static void __init omap_board_init(void)
 #endif
 	omap_voltage_init_vc(&vc_config);
 #endif
-	omap_register_ion();
+
 	sec_common_init_post();
 }
-
-#ifdef CONFIG_LATONA_EXPERIMENTAL
-static void __init latona_reserve(void)
-{
-	printk("******* Initializing latona_reserve ************ \n");
-	memblock_remove(OMAP3_PHYS_ADDR_SMC_MEM, PHYS_ADDR_SMC_SIZE);
-#ifdef CONFIG_ION_OMAP
-	omap_ion_init();
-#endif
-	omap_reserve();
-}
-#endif 
 
 static void __init omap_board_fixup(struct machine_desc *desc,
 				    struct tag *tags, char **cmdline,
@@ -606,9 +592,6 @@ MACHINE_START(LATONA, "LATONA")
     .io_pg_offst = ((0xfa000000) >> 18) & 0xfffc,
     .boot_params = 0x80000100,
     .fixup = omap_board_fixup,
-#ifdef CONFIG_LATONA_EXPERIMENTAL
-    .reserve = latona_reserve,
-#endif  
     .map_io = omap_board_map_io,
     .init_irq = omap_board_init_irq,
     .init_machine = omap_board_init,

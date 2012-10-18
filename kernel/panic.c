@@ -365,6 +365,7 @@ NORET_TYPE void panic(const char * fmt, ...)
 	long i;
 
 #ifdef CONFIG_SAMSUNG_KERNEL_DEBUG
+	int debug_level = 0;
 
 	local_irq_disable();
 	local_fiq_disable();

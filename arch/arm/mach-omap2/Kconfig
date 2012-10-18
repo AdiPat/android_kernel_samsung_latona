@@ -250,7 +250,7 @@ config MACH_OMAP_SAMSUNG
        bool "Samsung Latona (GT-I9003) Board"
        default n
        select MACH_OMAP3_SAMSUNG
- 
+
  config MACH_SAMSUNG_P1WIFI
        bool "Samsung P1WIFI (GT-P1010) Board"
        default n

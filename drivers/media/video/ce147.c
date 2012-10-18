@@ -867,6 +867,7 @@ fw_date_fail:
 //=============================================================================================
 static int ce147_check_dataline()
 {
+	int err;
 	struct ce147_sensor *sensor = &ce147;
 	struct i2c_client *client = sensor->i2c_client;
 
@@ -884,6 +885,7 @@ static int ce147_check_dataline()
 
 static int ce147_check_dataline_stop()
 {
+	int err;
 	struct ce147_sensor *sensor = &ce147;
 	struct i2c_client *client = sensor->i2c_client;
 

@@ -886,7 +886,7 @@ static int __devinit twl4030_usb_probe(struct platform_device *pdev)
 {
 	struct twl4030_usb_data *pdata = pdev->dev.platform_data;
 	struct twl4030_usb	*twl;
-	int err;
+	int			status, err;
 #ifdef USB_DETECT_GPIO
 	if (t2_transceiver)
 		return 0;

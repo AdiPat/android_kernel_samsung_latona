@@ -16,8 +16,6 @@
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/console.h>
-#include <linux/omapfb.h>
-#include <linux/memblock.h>
 #include <linux/serial.h>
 #include <linux/tty.h>
 #include <linux/serial_8250.h>
@@ -37,10 +35,6 @@
 #include <plat/mux.h>
 #include <plat/fpga.h>
 #include <plat/serial.h>
-#include <plat/common.h>
-#include <plat/vram.h>
-#include <plat/dsp.h>
-#include <plat/remoteproc.h>
 
 #include <plat/clock.h>
 
@@ -52,14 +46,6 @@
 
 struct omap_board_config_kernel *omap_board_config;
 int omap_board_config_size;
-
-void __init omap_reserve(void)
-{
-	omapfb_reserve_sdram();
-	omap_vram_reserve_sdram();
-	omap_dsp_reserve_sdram_memblock();
-	omap_ipu_reserve_sdram_memblock();
-}
 
 static const void *get_config(u16 tag, size_t len, int skip, size_t *len_out)
 {

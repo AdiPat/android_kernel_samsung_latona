@@ -361,6 +361,7 @@ static struct platform_device *sdp3430_snd_device;
 static int __init sdp3430_soc_init(void)
 {
 	int ret;
+	u8 pin_mux;
 
     printk(KERN_EMERG " %s : %s : %i \n", __FILE__, __FUNCTION__, __LINE__);
 

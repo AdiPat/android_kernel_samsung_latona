@@ -434,6 +434,19 @@ static struct regulator_init_data omap_board_aux2 = {
 
 
 /* VSIM for OMAP VDD_MMC1A (i/o for DAT4..DAT7) */
+static struct regulator_init_data omap_board_vsim = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 3000000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies  = 1,
+	.consumer_supplies      = &omap_board_vsim_supply,
+};
 
 static struct omap2_hsmmc_info mmc[] __initdata = {
 	{
@@ -502,6 +515,19 @@ static struct regulator_init_data omap_board_aux4 = {
 	.consumer_supplies = &omap_board_vaux4_supply,
 };
 
+/* VPLL2 for LCD */
+static struct regulator_init_data board_vpll2 = {
+	.constraints = {
+			.min_uV = 1800000,
+			.max_uV = 1800000,
+			.boot_on = true,
+			.valid_modes_mask = REGULATOR_MODE_NORMAL | REGULATOR_MODE_STANDBY,
+			.valid_ops_mask = REGULATOR_CHANGE_MODE | REGULATOR_CHANGE_STATUS,
+			},
+	.num_consumer_supplies = 1,
+	.consumer_supplies = &omap_board_vpll2_supply,
+};
+
 static struct __initdata twl4030_power_data latona_t2scripts_data;
 
 
@@ -537,6 +563,27 @@ static int omap_board_twl_gpio_setup(struct device *dev,
 	
 	return 0;
 }
+
+
+//ZEUS_LCD
+static struct omap_lcd_config board_lcd_config __initdata = {
+    .ctrl_name = "internal",
+};
+
+//ZEUS_LCD
+static struct omap_uart_config board_uart_config __initdata = {
+#ifdef CONFIG_SERIAL_OMAP_CONSOLE
+    .enabled_uarts = ((1 << 0) | (1 << 1) | (1 << 2)),
+#else
+    .enabled_uarts = ((1 << 0) | (1 << 1)),
+#endif
+};
+
+static struct omap_board_config_kernel board_config[] __initdata = {
+    {OMAP_TAG_UART, &board_uart_config},
+    {OMAP_TAG_LCD, &board_lcd_config},  //ZEUS_LCD
+};
+
 
 #ifdef CONFIG_WL127X_RFKILL
 static struct wl127x_rfkill_platform_data wl127x_plat_data = {
@@ -783,6 +830,9 @@ static struct twl4030_gpio_platform_data omap_board_gpio_data = {
 	.setup		= omap_board_twl_gpio_setup,
 	.debounce       = 0x04,
 };
+static struct twl4030_usb_data board_usb_data = {
+	.usb_mode = T2_USB_MODE_ULPI,
+};
 static struct twl4030_madc_platform_data omap_board_madc_data = {
 	.irq_line	= 1,
 };
@@ -886,7 +936,15 @@ static struct i2c_board_info __initdata board_i2c_boardinfo1[] = {
 		I2C_BOARD_INFO("Si4709_driver", 0x10),			
 	},
 };
+//Added for I2C3 register-CY8 --Not using 
 
+static struct i2c_board_info __initdata board_i2c_boardinfo_4[] = {
+    {
+        I2C_BOARD_INFO("melfas_ts", 0x40),// 10010(A1)(A0)  A1=PD0, A0=M(0=12bit, 1=8bit)
+        .type = "melfas_ts",
+        //.platform_data = &tsc2007_info,
+    },
+};
 #ifdef CONFIG_INPUT_ZEUS_EAR_KEY
 static inline void __init board_init_ear_key(void)
 {

@@ -61,13 +61,14 @@
 #include "pm.h"
 #include "sdrc.h"
 
+static struct clk *mbox_ick_handle;
 static int android_suspend = 0 ;
 
 /* modified for mp3 current -- begin */
 int audio_on = 0 ;
 /* modified for mp3 current -- end */
 // SAMSUNG egkim [
-extern void omap_acknowledge_interrupts(void);
+extern void omap_acknowledge_interrupts();
 static spinlock_t fleeting_lock = SPIN_LOCK_UNLOCKED;
 // ]
 /* Scratchpad offsets */
@@ -449,6 +450,7 @@ void omap_sram_idle(void)
 	int dss_next_state = PWRDM_POWER_ON;
 	int dss_state_modified = 0;
 //idle current optimisation 	
+	u32 reg,cam_clks = 0;
 //idle current optimisation 	
 
 	if (!_omap_sram_idle)
@@ -839,12 +841,14 @@ static int omap3_pm_suspend(void)
 {
 	struct power_state *pwrst;
 	int state, ret = 0;
+	u32 reg , reg1= 0 ;
+	static int count = 1 ;
 
     // Checking GPtimer12 wakeup[+]
     static int gptimer_wakeup_count = 1;
 	u32 wkup_st = 0;
 	u32 ret_val = 0;
-	
+	u32 regval = 0;
 	unsigned long fleeting_flag = 0;
     // Checking GPtimer12 wakeup[-]
 	

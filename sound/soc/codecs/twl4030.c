@@ -1104,6 +1104,7 @@ static inline void twl4030_write_reg_cache(struct snd_soc_codec *codec,
 			unsigned int reg, unsigned int value)
 {
 	struct twl4030_priv *twl4030 = snd_soc_codec_get_drvdata(codec);
+	int write_to_reg = 0;
 
 	twl4030_write_reg_cache(codec, reg, value);
 	

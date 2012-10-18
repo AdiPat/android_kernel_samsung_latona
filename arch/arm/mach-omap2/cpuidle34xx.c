@@ -142,10 +142,10 @@ static int omap3_enter_idle(struct cpuidle_device *dev,
 	struct timespec ts_preidle, ts_postidle, ts_idle;
 	u32 mpu_state = cx->mpu_state, core_state = cx->core_state, cam_state = 0;
 	/* modified for mp3 current -- begin */
-	static int cam_deny = 0;
 	u32 mpu_prev,core_prev =0 ;
 	current_cx_state = *cx;
-	
+	int requested=cx->type;
+	static int cam_deny = 0;
 
 	
 	/* modified for mp3 current -- end*/
