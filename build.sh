@@ -20,7 +20,7 @@ rm *.log
 
 echo "Compiling Modules"
 
-make -j84 modules # > ../compile-module.log 2>&1
+make -j84 modules > ../compile-module.log 2>&1
 
 echo "Copy modules"
 
@@ -30,7 +30,7 @@ echo "Building zImage"
 
 make clean
 
-make -j84 zImage # > ../compile-zImage.log 2>&1
+make -j84 zImage > ../compile-zImage.log 2>&1
 
 echo "Repacking the Kernel now"
 
@@ -65,9 +65,9 @@ cd ../../../
 
 rm *.zip
 
-zip -r AOSP_KERNEL#$vrsn.zip META-INF system boot.img
+zip -r BETA_KERNEL#$vrsn.zip META-INF system boot.img
 
-cp AOSP_KERNEL#$vrsn.zip ../../AOSP_KERNEL#$vrsn.zip
+cp BETA_KERNEL#$vrsn.zip ../../BETA_KERNEL#$vrsn.zip
 
 echo "Done"
 

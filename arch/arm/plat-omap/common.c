@@ -55,8 +55,8 @@ int omap_board_config_size;
 
 void __init omap_reserve(void)
 {
-	omapfb_reserve_sdram_memblock();
-	omap_vram_reserve_sdram_memblock();
+	omapfb_reserve_sdram();
+	omap_vram_reserve_sdram();
 	omap_dsp_reserve_sdram_memblock();
 	omap_ipu_reserve_sdram_memblock();
 }
