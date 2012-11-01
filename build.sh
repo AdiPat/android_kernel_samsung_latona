@@ -17,12 +17,12 @@ echo "|---------------------------------------------|"
 echo "Cleaning source"
 rm $OUT/normalboot.img
 cd ../
-rm *.gz
+rm *.lzma
 cd $KERNEL_DIR 
 export CROSS_COMPILE=$CROSS_COMPILE-
 make -j clean mrproper
 echo "Importing defconfig"
-make -j latona_galaxysl_defconfig
+make -j debug_defconfig
 echo "Please Enter Release Version" 
 read $version 
 echo $version > .version
@@ -46,10 +46,9 @@ done
 cd $KERNEL_DIR
 echo "Packing Ramdisk"
 cd $ROOT
-./mkbootfs $RAMDISK_DIR | lzma > ramdisk.lzma 
+./mkbootfs ramdisk | lzma > ramdisk.lzma
 echo "Pack normalboot"
-./mkbootimg --kernel $KERNEL_DIR/arch/arm/boot/zImage --ramdisk ramdisk.lzma -o $OUT/normalboot.img --base $BASE
-
+./mkbootimg --kernel $KERNEL_DIR/arch/arm/boot/zImage --ramdisk ramdisk.cpio.gz --pagesize 1000 -o $OUT/normalboot.img 
 cd $OUT
 echo "Clear old tarballs"
 rm *.tar
