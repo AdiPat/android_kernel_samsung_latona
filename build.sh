@@ -18,7 +18,6 @@ echo "Cleaning source"
 rm $OUT/normalboot.img
 cd ../
 rm *.gz
-cd out 
 cd $KERNEL_DIR 
 export CROSS_COMPILE=$CROSS_COMPILE-
 make -j clean mrproper
