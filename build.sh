@@ -48,7 +48,7 @@ echo "Packing Ramdisk"
 cd $ROOT
 ./mkbootfs ramdisk | lzma > ramdisk.lzma
 echo "Pack normalboot"
-./mkbootimg --kernel $KERNEL_DIR/arch/arm/boot/zImage --ramdisk ramdisk.cpio.gz --pagesize 1000 -o $OUT/normalboot.img 
+./mkbootimg --kernel $KERNEL_DIR/arch/arm/boot/zImage --ramdisk ramdisk.lzma --pagesize 1000 -o $OUT/normalboot.img 
 cd $OUT
 echo "Clear old tarballs"
 rm *.tar
