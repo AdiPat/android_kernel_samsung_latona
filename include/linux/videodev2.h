@@ -1208,6 +1208,7 @@ enum v4l2_touch_af {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /* last CID + 1 */
+#undef V4L2_CID_LASTP1
 #define V4L2_CID_LASTP1                         (V4L2_CID_BASE+38)
 
 /*  MPEG-class control IDs defined by V4L2 */
