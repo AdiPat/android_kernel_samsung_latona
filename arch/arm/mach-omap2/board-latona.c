@@ -421,9 +421,6 @@ static int omap_board_reboot_call(struct notifier_block *this,
 	return NOTIFY_DONE;
 }
 
-static struct notifier_block omap_board_reboot_notifier = {
-	.notifier_call = omap_board_reboot_call,
-};
 
 /* OPP MPU/IVA Clock Frequency */
 struct opp_frequencies {
