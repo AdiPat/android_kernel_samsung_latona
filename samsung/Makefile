@@ -32,4 +32,4 @@ obj-$(CONFIG_INPUT_BMA222)	+= bma222/
 obj-$(CONFIG_INPUT_GP2A)	+= gp2a/
 obj-$(CONFIG_INPUT_ORIENTATION) += orientation/
 obj-$(CONFIG_SUPPORT_GPS)	+= gps/
-
+obj-$(CONFIG_J4FS)          	+= j4fs/
