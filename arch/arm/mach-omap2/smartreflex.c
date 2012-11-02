@@ -76,7 +76,8 @@ static inline void sr_modify_reg(struct omap_sr *sr, unsigned offset, u32 mask,
 					u32 value)
 {
 	u32 reg_val;
-	u32 errconfig_offs, errconfig_mask;
+	u32 errconfig_offs = 0; 
+	u32 errconfig_mask = 0;
 
 	reg_val = __raw_readl(sr->base + offset);
 	reg_val &= ~mask;
