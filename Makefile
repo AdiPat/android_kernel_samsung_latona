@@ -550,7 +550,7 @@ endif
 
 # Disable unused but set variable 
 
-CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+KBUILD_CFLAGS += $(call cc-option,-Wno-unused-but-set-variable,) 
 
 ifdef CONFIG_FRAME_POINTER
 KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
