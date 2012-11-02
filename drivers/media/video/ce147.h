@@ -126,6 +126,10 @@ typedef enum {
  * @ifparm: Interface parameters access function
  * @priv_data_set: device private data (pointer) access function
  */
+
+enum v4l2_power;
+struct v4l2_ifparm;
+
 struct ce147_platform_data {
 	int (*power_set)(enum v4l2_power power);
 	int (*ifparm)(struct v4l2_ifparm *p);

@@ -98,6 +98,8 @@ extern void twl4030_bci_battery_init(void);
 /* FIXME: old-style */
 #define CONFIG_REV_STR			C_SBL_BOARD_REV
 
+enum omap_dss_venc_type;
+
 extern void __init omap_board_peripherals_init(void);
 extern void __init omap_board_display_init(enum omap_dss_venc_type venc_type);
 
