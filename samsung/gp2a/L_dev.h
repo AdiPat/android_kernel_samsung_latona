@@ -20,6 +20,10 @@
 
 /*Function prototypes*/
 /**************************************************************/
+
+//Battery driver and L_Dev.c
+int get_average_adc_value(unsigned int * data, int count);
+//
 extern void L_dev_sync_mech_init(void); 
 
 extern int L_dev_init(void);

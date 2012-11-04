@@ -1,9 +1,7 @@
 #
 # Makefile for the touch sense(vibetonz) driver
 #
-
-obj-m += vibetonz.o
-
+obj-m := vibetonz.o
 vibetonz-objs += tspdrv.o 
 
 all:

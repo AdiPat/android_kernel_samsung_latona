@@ -95,7 +95,6 @@ int L_dev_suspend(void);
 int L_dev_resume(void);
 int L_dev_get_adc_val(u32 *);
 int L_dev_get_illum_lvl(u16 *);
-int get_average_adc_value(unsigned int * data, int count);
 int L_dev_polling_start( void );
 int L_dev_polling_stop( void );
 int L_dev_set_timer(u16);
