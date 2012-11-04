@@ -102,10 +102,6 @@ static char *usb_functions_ums[] = {
 	"usb_mass_storage",
 };
 
-static char *usb_functions_adb[] = {
-	"adb",
-};
-
 static char *usb_functions_rndis[] = {
 	"rndis",
 };

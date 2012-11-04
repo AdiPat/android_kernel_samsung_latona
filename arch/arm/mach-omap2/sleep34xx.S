@@ -70,7 +70,7 @@ wait_loop:
 	ldr	r2, [r1]	@ load the lock value
 	cmp	r2, r0		@ is the lock free ?
 	beq	wait_loop	@ not free...
-	swp	r2, r0, [r1]	@ semaphore free so lock it and proceed
+	//swp	r2, r0, [r1]	@ semaphore free so lock it and proceed
 	cmp	r2, r0		@ did we succeed ?
 	beq	wait_sem	@ no - try again
 	ldmfd	sp!, {pc}	@ restore regs and return

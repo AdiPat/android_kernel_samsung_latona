@@ -800,7 +800,7 @@ int omap_stop_dma_chain_transfers(int chain_id)
 {
 	int *channels;
 	u32 l, i;
-	u32 get_sysconfig;
+	u32 get_sysconfig = 0;
 
 	/* Check for input params */
 	if (unlikely((chain_id < 0 || chain_id >= dma_chan_count))) {
