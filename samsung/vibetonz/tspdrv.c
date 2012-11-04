@@ -40,9 +40,11 @@
 #include <linux/version.h>
 #include <linux/miscdevice.h>
 #include <linux/platform_device.h>
+
 #include <asm/uaccess.h>
 #include "tspdrv.h"
 #include "ImmVibeSPI.c"
+
 
 /* Device name and version information */
 #define VERSION_STR " v3.3.13.0\n"                  /* DO NOT CHANGE - this is auto-generated */

@@ -19,7 +19,7 @@
 
 config SAMSUNG_VIBETONZ
 	tristate "Immersion touch sense driver(vibetonz)"
-	default m
+	default y
 	help
 		Imersion touch sense driver(vibetonz)
 

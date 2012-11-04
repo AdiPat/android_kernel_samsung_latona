@@ -17,7 +17,7 @@
 # USA.
 #
 
-obj-m := yas_acc_kernel_driver.o
+obj-y := yas_acc_kernel_driver.o
 
 clean:
 	rm -f *.o *.ko *.mod.* *~ .*.cmd Module.symvers modules.order

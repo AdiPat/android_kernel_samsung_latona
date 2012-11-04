@@ -17,4 +17,4 @@
 # USA.
 #
 
-obj-m := yas_ori_kernel_driver.o
+obj-y := yas_ori_kernel_driver.o

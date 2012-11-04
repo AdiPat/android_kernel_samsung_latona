@@ -4,7 +4,7 @@
 
 #include <linux/gpio.h>
 #include <plat/mux.h>
-
+#include "../gp2a/L_dev.h"
 #define PHY_VINTANA2_DEDICATED      0xA1
 #define T2_VINTANA2_2V75            0x1
 #define T2_VINTANA2_OFF             1<<6
@@ -96,7 +96,6 @@ s32 t2_adc_data( u8 channel);
 int sleep_get_max17040_battery_adc(void);
 int sleep_get_max17040_battery_soc(void);
 int sleep_max17040_read(u8 reg);
-int get_average_adc_value(unsigned int * data, int count);
 
 
 s32 clear_set(u8 mod_no, u8 clear, u8 set, u8 reg)
@@ -301,19 +300,3 @@ s32 t2_adc_data( u8 channel)
 	return ret;
 }
 
-int get_average_adc_value(unsigned int * data, int count)
-{
-	int i=0, average, min=0xFFFFFFFF, max=0, total=0;
-	for(i=0 ; i<count ; i++)
-	{
-		if(data[i] < min)
-			min=data[i];
-		if(data[i] > max)
-			max=data[i];
-
-		total+=data[i];
-	}
-
-	average = (total - min -max)/(count -2);
-	return average;
-}
