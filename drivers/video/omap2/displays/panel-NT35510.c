@@ -24,24 +24,12 @@
 #include <linux/spi/spi.h>
 #include <linux/regulator/consumer.h>
 #include <linux/err.h>
-/*
-#include <mach/gpio.h>
-#include <mach/hardware.h>
-#include <mach/mux.h>
-#include <asm/mach-types.h>
-#include <mach/control.h>
-
-#include <mach/display.h>
-*/
 #include <plat/gpio.h>
 #include <plat/hardware.h>
 #include <plat/mux.h>
 #include <asm/mach-types.h>
 #include <plat/control.h>
-
 #include <plat/display.h>
-
-//#include <linux/leds.h>
 #include <linux/backlight.h>
 #include  <../../../../arch/arm/mach-omap2/mux.h>
 #include <linux/i2c/twl.h>
@@ -73,15 +61,12 @@ static u16 LCD_VSW =	2;
 #define POWER_ON	1	// set in lcd_poweron function
 
 static struct spi_device *nt35510lcd_spi;
-    
-
-static atomic_t lcd_power_state = ATOMIC_INIT(POWER_ON);	// default is power on because bootloader already turn on LCD.
 static atomic_t ldi_power_state = ATOMIC_INIT(POWER_ON);	// ldi power state
 
 int g_lcdlevel = 0x6C;
 
 // ------------------------------------------ // 
-//          For Regulator Framework                            //
+//          For Regulator Framework                          
 // ------------------------------------------ // 
 
 struct regulator *vaux3;
@@ -99,7 +84,7 @@ void nt35510_ldi_poweron_hitachi(void);
 void nt35510_ldi_poweroff_hitachi(void);
 
 
-// paramter : POWER_ON or POWER_OFF
+// parameter : POWER_ON or POWER_OFF
 typedef void (*notification_handler)(const int);
 typedef struct
 {
@@ -116,10 +101,7 @@ void nt35510_remove_power_state_monitor(notification_handler handler);
 
 EXPORT_SYMBOL(nt35510_add_power_state_monitor);
 EXPORT_SYMBOL(nt35510_remove_power_state_monitor);
-
-static void nt35510_notify_power_state_changed(void);
 static void aat1402_set_brightness(void);
-//extern int omap34xx_pad_set_configs(struct pin_config *pin_configs, int n);
 extern int omap34xx_pad_set_config_lcd(u16,u16);
 
 #define PM_RECEIVER                     TWL4030_MODULE_PM_RECEIVER
@@ -130,76 +112,11 @@ extern int omap34xx_pad_set_config_lcd(u16,u16);
 #define TWL4030_VPLL2_DEDICATED       	0x36
 
 
-static struct pin_config  omap34xx_lcd_pins[] = {
-/*
- *		Name, reg-offset,
- *		mux-mode | [active-mode | off-mode]
- */
- 
-	// MCSPI1 AND MCSPI2 PIN CONFIGURATION
-	// FOR ALL SPI, SPI_CS0 IS I/O AND OTHER SPI CS ARE PURE OUT.
-	// CLK AND SIMO/SOMI LINES ARE I/O.
-/*
-	// 206 (AB3, L, MCSPI1_CLK, DISPLAY_CLK, O)
-	MUX_CFG_34XX("AB3_MCSPI1_CLK", 0x01C8,  OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
-	// 207 (AB4, L, MCSPI1_SIMO, DISLPAY_SI, I)
-	MUX_CFG_34XX("AB4_MCSPI1_SIMO", 0x01CA,  OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLDOWN)
-	// 208 (AA4, L, MCSPI1_SOMI, DISLPAY_SO, O)
-	MUX_CFG_34XX("AA4_MCSPI1_SOMI", 0x01CC,  OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLDOWN)
-	// 209 (AC2, H, MCSPI1_CS0, DISPLAY_CS, O)
-	MUX_CFG_34XX("AC2_MCSPI1_CS0", 0x01CE,  OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
-	*/
-	 //omap_mux_init_signal("gpio_163", OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLUP);
-	// omap_mux_init_signal("MCSPI1_SIMO", OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN);
-	// omap_mux_init_signal("MCSPI1_SOMI", OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN);
-	// 209 (AC2, H, MCSPI1_CS0, DISPLAY_CS, O)
-	//omap_mux_init_signal("sys_nirq",OMAP_WAKEUP_EN | OMAP_PIN_INPUT_PULLUP);
-	//omap_mux_init_signal("MCSPI1_CS0", OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLUP);
-	 
-	
-	
-};
-
-static struct pin_config  omap34xx_lcd_off_pins[] = {
-/*
- *		Name, reg-offset,
- *		mux-mode | [active-mode | off-mode]
- */
- 
-	// MCSPI1 AND MCSPI2 PIN CONFIGURATION
-	// FOR ALL SPI, SPI_CS0 IS I/O AND OTHER SPI CS ARE PURE OUT.
-	// CLK AND SIMO/SOMI LINES ARE I/O.
-
-	// 206 (AB3, L, MCSPI1_CLK, DISPLAY_CLK, O)
-	//MUX_CFG_34XX("AB3_MCSPI1_CLK", 0x01C8,  OMAP_MUX_MODE7 | OMAP_PIN_INPUT_PULLDOWN)
-	// 207 (AB4, L, MCSPI1_SIMO, DISLPAY_SI, I)
-	//MUX_CFG_34XX("AB4_MCSPI1_SIMO", 0x01CA,  OMAP_MUX_MODE7 | OMAP_PIN_INPUT_PULLDOWN)
-	// 208 (AA4, L, MCSPI1_SOMI, DISLPAY_SO, O)
-	//MUX_CFG_34XX("AA4_MCSPI1_SOMI", 0x01CC,  OMAP_MUX_MODE7 | OMAP_PIN_INPUT_PULLDOWN)
-	// 209 (AC2, H, MCSPI1_CS0, DISPLAY_CS, O)
-	//MUX_CFG_34XX("AC2_MCSPI1_CS0", 0x01CE,  OMAP_MUX_MODE7 | OMAP_PIN_INPUT_PULLDOWN)
-	
-};
-
 /*  Manual
  * defines HFB, HSW, HBP, VFP, VSW, VBP as shown below
  */
 
 static struct omap_video_timings panel_timings = {0,};
-#if 0 
-= {
-	/* 800 x 480 @ 60 Hz  Reduced blanking VESA CVT 0.31M3-R */
-	.x_res          = LCD_XRES,
-	.y_res          = LCD_YRES,
-	.pixel_clock    = LCD_PIXCLOCK_MAX,
-	.hfp            = LCD_HFP,
-	.hsw            = LCD_HSW,
-	.hbp            = LCD_HBP,
-	.vfp            = LCD_VFP,
-	.vsw            = LCD_VSW,
-	.vbp            = LCD_VBP,
-};
-#endif
 int nt35510_add_power_state_monitor(notification_handler handler)
 {
 	int index = 0;
@@ -241,19 +158,6 @@ void nt35510_remove_power_state_monitor(notification_handler handler)
 		}
 	}
 }
-	
-static void nt35510_notify_power_state_changed(void)
-{
-	int index = 0;
-	for(; index < MAX_NOTIFICATION_HANDLER; index++)
-	{
-		if(power_state_change_handler[index] != NULL)
-		{
-			power_state_change_handler[index](atomic_read(&lcd_power_state));
-		}
-	}
-
-}
 
 static __init int setup_current_panel(char *opt)
 {
@@ -279,20 +183,10 @@ static int nt35510_panel_probe(struct omap_dss_device *dssdev)
 	//MLCD pin set to OUTPUT.
 	if (gpio_request(OMAP_GPIO_MLCD_RST, "MLCD_RST") < 0) {
 		printk(KERN_ERR "\n FAILED TO REQUEST GPIO %d \n", OMAP_GPIO_MLCD_RST);
-		return;
+		return 0; //R U retarded samsung? 
 	}
 	gpio_direction_output(OMAP_GPIO_MLCD_RST, 1);
-/*
-	lcd_id1=gpio_get_value(OMAP_GPIO_LCD_ID1);
-	lcd_id2=gpio_get_value(OMAP_GPIO_LCD_ID2);
 
-	if(lcd_id1==0 && lcd_id2==1)
-		current_panel=0;	// Sony
-	else if(lcd_id1==1 && lcd_id2==0)
-		current_panel=1;	// Hitachi
-	else 
-		current_panel=2;	// Hydis
-*/
 	printk("[LCD] %s() : current_panel=%d(0:sony, 1:Hitachi(20mA) , 2:Hydis, 3:SMD, 4:Sony(a-Si)), 5:Hitachi(17mA)\n",
 		__func__, current_panel);
 
@@ -414,13 +308,7 @@ static int nt35510_panel_suspend(struct omap_dss_device *dssdev)
 
 	gpio_set_value(OMAP_GPIO_LCD_EN_SET, GPIO_LEVEL_LOW);
 	mdelay(1);
-
-    #if 0
-	nt35510_lcd_poweroff();
-    #else
-//	nt35510_ldi_standby();
 	nt35510_panel_disable(dssdev);
-    #endif
    
 	dssdev->state = OMAP_DSS_DISPLAY_SUSPENDED;
     return 0;
@@ -431,15 +319,8 @@ static int nt35510_panel_resume(struct omap_dss_device *dssdev)
 	printk(KERN_INFO " **** nt35510_panel_resume\n");
 
 	spi_setup(nt35510lcd_spi);
-    
-//		msleep(150);
-    
-    #if 0
-	nt35510_lcd_poweron();
-    #else
-//	nt35510_ldi_wakeup();
+
 	nt35510_panel_enable(dssdev);
-    #endif
 
 	gpio_set_value(OMAP_GPIO_LCD_EN_SET, GPIO_LEVEL_LOW);
 	mdelay(1);
@@ -481,22 +362,6 @@ static void spi1writedata(u8 data)
 	datas= 0x0100|data;
 	spi_write(nt35510lcd_spi,(unsigned char*)&datas,2);
 
-	udelay(100);
-	udelay(100);
-}
-
-
-static void spi1write(u8 index, u8 data)
-{
-	volatile unsigned short cmd = 0;
-	volatile unsigned short datas=0;
-
-	cmd = 0x0000 | index;
-	datas = 0x0100 | data;
-	
-	spi_write(nt35510lcd_spi,(unsigned char*)&cmd,2);
-	udelay(100);
-	spi_write(nt35510lcd_spi,(unsigned char *)&datas,2);
 	udelay(100);
 	udelay(100);
 }
@@ -854,8 +719,8 @@ void nt35510_ldi_poweron_sony_a_si(void)
 	msleep(150); // 150ms
 
 	spi1writeindex(0x51);
-	spi1writedata(0x0); // default brightness : 0
-//	spi1writedata(0x6C); // default brightness : 108
+	//spi1writedata(0x0); // default brightness : 0
+	spi1writedata(0x6C); // default brightness : 108
 	aat1402_set_brightness();
 
 	spi1writeindex(0x55);
@@ -1675,14 +1540,10 @@ static DEVICE_ATTR(lcd_power, 0664,
 
 // [[ backlight control 
 static int current_intensity = 108;	// DEFAULT BRIGHTNESS
-static DEFINE_SPINLOCK(aat1402_bl_lock);
 
 static void aat1402_set_brightness(void)
 {
 	printk(KERN_DEBUG" *** aat1402_set_brightness : %d\n", current_intensity);
-	//spin_lock_irqsave(&aat1402_bl_lock, flags);
-	//spin_lock(&aat1402_bl_lock);
-
 	if(current_panel==1 || current_panel==5)	// if Hitachi 20mA, 17mA
 	{
 		int orig_intensity = current_intensity;
@@ -1745,21 +1606,14 @@ static int aat1402_bl_set_intensity(struct backlight_device *bd)
 {
 	//unsigned long flags;
 	int intensity = bd->props.brightness;
-//	int retry_count=10;
+	//int retry_count=10;
 	
 	if( intensity < 0 || intensity > 255 )
-		return;
-/*
-	while(atomic_read(&ldi_power_state)==POWER_OFF) 
-	{
-		if(--retry_count == 0)
-			break;
-		mdelay(5);
-	}
-*/	
+		return 0;
+
 	current_intensity = intensity;
 	if(atomic_read(&ldi_power_state)==POWER_OFF) 
-		return;
+		return 0;
 	aat1402_set_brightness();
 
 	return 0;
@@ -1773,29 +1627,30 @@ static struct backlight_ops aat1402_bl_ops = {
 
 static int nt35510_spi_probe(struct spi_device *spi)
 {
-    struct backlight_properties props;
-     int status =0;
-	 int ret;
-		
-	printk(KERN_INFO " **** nt35510_spi_probe.\n");
+	struct backlight_properties props;
+	struct backlight_device *bd;
+	int status =0;
+	int ret;
 	nt35510lcd_spi = spi;
 	nt35510lcd_spi->mode = SPI_MODE_0;
-	nt35510lcd_spi->bits_per_word = 9 ;
-
+	nt35510lcd_spi->bits_per_word = 9;
+	status = spi_setup(nt35510lcd_spi);
+	
+       
+  
+	printk(KERN_INFO " **** nt35510_spi_probe.\n");
 	printk(" nt35510lcd_spi->chip_select = %x\t, mode = %x\n", nt35510lcd_spi->chip_select,  nt35510lcd_spi->mode);
 	printk("ax_speed_hz  = %x\t modalias = %s", nt35510lcd_spi->max_speed_hz, nt35510lcd_spi->modalias );
 	
-	status = spi_setup(nt35510lcd_spi);
+	
 	printk(" spi_setup ret = %x\n",status );
 	
 	omap_dss_register_driver(&nt35510_driver);
-//	led_classdev_register(&spi->dev, &nt35510_backlight_led);
-	struct backlight_device *bd;
 	bd = backlight_device_register("omap_bl", &spi->dev, NULL, &aat1402_bl_ops, &props);
 	bd->props.max_brightness = 255;
 	bd->props.brightness = 125;
-
 	ret = device_create_file(&(spi->dev), &dev_attr_lcd_power);
+	
 	if (ret < 0)
 		dev_err(&(spi->dev), "failed to add sysfs entries\n");
 		
@@ -1825,36 +1680,13 @@ static void nt35510_spi_shutdown(struct spi_device *spi)
 	gpio_set_value(OMAP_GPIO_LCD_EN_SET, GPIO_LEVEL_LOW);
 }
 
-static int nt35510_spi_suspend(struct spi_device *spi, pm_message_t mesg)
+static int nt35510_spi_suspend(struct spi_device *spi, pm_message_t mesg) 
 {
-    //spi_send(spi, 2, 0x01);  /* R2 = 01h */
-    //mdelay(40);
-
-#if 0
-	nt35510lcd_spi = spi;
-	nt35510lcd_spi->mode = SPI_MODE_0;
-	nt35510lcd_spi->bits_per_word = 16 ;
-	spi_setup(nt35510lcd_spi);
-
-	lcd_poweroff();
-	zeus_panel_power_enable(0);
-#endif
-
 	return 0;
 }
 
-static int nt35510_spi_resume(struct spi_device *spi)
+static int nt35510_spi_resume(struct spi_device *spi) 
 {
-	/* reinitialize the panel */
-#if 0
-	zeus_panel_power_enable(1);
-	nt35510lcd_spi = spi;
-	nt35510lcd_spi->mode = SPI_MODE_0;
-	nt35510lcd_spi->bits_per_word = 16 ;
-	spi_setup(nt35510lcd_spi);
-
-	lcd_poweron();
-#endif
 	return 0;
 }
 
