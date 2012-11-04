@@ -25,7 +25,7 @@
 
 menuconfig J4FS
 	tristate "Samsung J4FS support"
-	default m
+	default n
 	help
 	  Say Y to enable Samsung J4FS support.
 
