@@ -208,8 +208,6 @@ static OMAP_GPIO_I2C_CLIENT * Si4709_i2c_client;
 /**********************************************/
 static void wait(void);
 
-static void wait_RDS(void );
-
 static int powerup(void);
 static int powerdown(void);
 
@@ -220,8 +218,6 @@ static void get_cur_chan_freq(u32 *, u16);
 
 static u16 freq_to_channel(u32);
 static u32 channel_to_freq(u16);
-
-static int insert_preset(u32,u8,u8*);
 
 static int i2c_read(u8);
 static int i2c_write(u8);
@@ -2465,12 +2461,6 @@ static void wait(void)
 	//mutex_lock(&(Si4709_dev.lock));   //changoh.heo 2010.11.12
 }
 
-static void wait_RDS(void)
-{
-	printk("fmradio : wait_RDS_event_interruptible\n");
-   wait_event_interruptible_timeout(Si4709_waitq, 
-  	(Si4709_dev_wait_flag == WAIT_OVER),Si4709_dev.settings.timeout_RDS);
-}
 
 /*i2c read function*/
 /*Si4709_dev.client should be set before calling this function.
@@ -2508,7 +2498,7 @@ static int i2c_read( u8 reg )
 	ret = i2c_master_recv(Si4709_dev.client, data, msglen);
 #else
 	i2c_rd_param.reg_len = 0;
-	i2c_rd_param.reg_addr = &data;
+	i2c_rd_param.reg_addr = data;
 	i2c_rd_param.rdata_len = msglen;
 	i2c_rd_param.rdata = data;
         
@@ -2592,9 +2582,9 @@ static int i2c_write( u8 reg )
 	    } while(writing_reg != ((reg + 1) & RDSD));
 
 #if !defined(CONFIG_FMRADIO_USE_GPIO_I2C)
-	    ret = i2c_master_send(Si4709_dev.client, ( const char *)data, msglen);
+	    ret = i2c_master_send(Si4709_dev.client, ( unsigned char *)data, msglen);
 #else
-            ret =GP_i2c_write( ( const char *)data, msglen);
+            ret =GP_i2c_write( ( unsigned char *)data, msglen);
 #endif
 
     	if(ret == msglen) 
@@ -2608,55 +2598,3 @@ static int i2c_write( u8 reg )
 
     	return ret;
 }    
-
-static int  insert_preset(u32 frequency,u8 rssi,u8 *seek_preset_rssi)
-{
-    u8 i;
-	  u8 min_rssi = 0xff;
-   	u8 min_rssi_preset=0;
-   	int ret = 0;
-		   
-	/* first find the minimum rssi and its location
-	   this will always stop at the first location with a zero rssi */
-	   
-	   debug("si4709 autoseek : insert preset\n");
-	
-	   for (i=0; i<NUM_SEEK_PRESETS; i++) 
-		 {
-		     if (seek_preset_rssi[i] < min_rssi)
-		     	 {
-			         min_rssi = seek_preset_rssi[i];
-			         min_rssi_preset = i;
-		      }
-	   }
-
-	  if (rssi < min_rssi)
-		 ret = -1;
-	   
-	/***Delete the preset with the minimum rssi, and clear the last preset
-	       since it would only be a copy of the second to last preset after
-	       the deletion ***/
-	 for (i=min_rssi_preset; i<NUM_SEEK_PRESETS-1; i++)
-		{
-		     Si4709_dev.settings.seek_preset[i]= Si4709_dev.settings.seek_preset[i+1];
-		     seek_preset_rssi[i] = seek_preset_rssi[i+1];
-  	 }
-	
-	 Si4709_dev.settings.seek_preset[i] = 0;
-	 seek_preset_rssi[i] = 0;
-
-	/*** Fill the first preset with a zero for the frequency.  This will
-	        always overwrite the last preset once all presets have been filled. ***/
-	 for (i=min_rssi_preset; i<NUM_SEEK_PRESETS; i++)
-		{
-		     if(Si4709_dev.settings.seek_preset[i] == 0) 
-		     	 {
-			         Si4709_dev.settings.seek_preset[i]= frequency;
-			         seek_preset_rssi[i] = rssi;
-			         break;
-		       }
-	   }
-	 return ret;
-}	
-
-

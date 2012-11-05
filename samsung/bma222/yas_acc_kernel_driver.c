@@ -705,7 +705,6 @@ static int bma222_fast_calibration(char layout[])
 {
     char tmp = 1;	// select x axis in cal_trigger by default
     int power_off_after_calibration = 0;
-    struct yas_acc_private_data *data =yas_acc_get_data();
 	
     if(!yas_bma222_get_enable())
     {
@@ -765,6 +764,7 @@ static int bma222_fast_calibration(char layout[])
 static ssize_t bma222_calibration_show(struct device *dev,
                                        struct device_attribute *attr, char *buf)
 {
+return 0;
 }
 
 static ssize_t bma222_calibration_store(struct device *dev,
@@ -1057,7 +1057,7 @@ static int bma222_init_proc()
     return err;
 }
 
-static int bma222_exit_proc()
+static int bma222_exit_proc(void)
 {
 
   struct yas_acc_private_data *data = yas_acc_get_data();

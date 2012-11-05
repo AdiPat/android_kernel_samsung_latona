@@ -183,7 +183,7 @@ static int vibtonz_ReqGPTimer(void)
 	return 0;
 }
 
-void vibtonzGPtimer_enable()
+void vibtonzGPtimer_enable(void)
 {
 	omap_dm_timer_enable(gptimer);
 }
@@ -375,20 +375,6 @@ IMMVIBESPIAPI VibeStatus ImmVibeSPI_ForceOut_Set(VibeUInt8 nActuatorIndex, VibeI
 IMMVIBESPIAPI VibeStatus ImmVibeSPI_ForceOut_SetSamples(VibeUInt8 nActuatorIndex, VibeUInt16 nOutputSignalBitDepth, VibeUInt16 nBufferSizeInBytes, VibeInt8* pForceOutputBuffer)
 {
     /* This function is not called for LRA device */
-    return VIBE_S_SUCCESS;
-}
-
-/*
-** Called to set force output frequency parameters
-*/
-IMMVIBESPIAPI VibeStatus ImmVibeSPI_ForceOut_SetFrequency(VibeUInt8 nActuatorIndex, VibeUInt16 nFrequencyParameterID, VibeUInt32 nFrequencyParameterValue)
-{
-//#error Please review the code between the #if and #endif
-
-#if 0 
-    #error  "The OEM must handle different frequency parameters here"
-#endif
-
     return VIBE_S_SUCCESS;
 }
 
