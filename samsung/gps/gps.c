@@ -174,7 +174,7 @@ static int gps_early_resume(struct early_suspend *handler)
 }
 #endif
 
-static int gps_init_proc()
+static int gps_init_proc(void)
 {
 	// initialize GPIO
 	if(gpio_is_valid(OMAP_GPIO_GPS_EN))
@@ -250,7 +250,7 @@ static int gps_init_proc()
 
 }
 
-static int gps_exit_proc()
+static int gps_exit_proc(void)
 {
 #if defined(CONFIG_HAS_EARLYSUSPEND)
 	unregister_early_suspend(&early_suspend);
