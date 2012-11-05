@@ -24,8 +24,9 @@ make -j clean mrproper
 echo "Importing defconfig"
 make -j debug_defconfig
 echo "Please Enter Release Version" 
-read $version 
-echo $version > .version
+read $version
+touch .version
+echo "$version" > .version
 echo ">> COMPILING!"
 make -j84
 echo "Copying modules and stripping em"
