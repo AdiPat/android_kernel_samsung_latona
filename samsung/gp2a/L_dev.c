@@ -607,7 +607,7 @@ void L_dev_set_op_state(u16 op_state)
 
 int L_dev_polling_start(void)
 {    
-    printk("[light] L_dev_polling_start() L_dev.polling_time = %d ms\n", L_dev.polling_time);
+    printk("[light] L_dev_polling_start() L_dev.polling_time = %u ms\n", (unsigned int)L_dev.polling_time);
     if(L_dev.saved_polling_state == L_SYSFS_POLLING_ON)
     {
         debug("[light] L_dev_polling_start() ... already POLLING ON!! \n");
@@ -672,12 +672,6 @@ static void L_dev_work_func (struct work_struct *unused)
     debug("[light] L_dev_work_func(), L_dev.saved_polling_state= %d\n", L_dev.saved_polling_state);
     if( !(L_dev.saved_polling_state) )
     {
-#ifdef CONFIG_FSA9480_NOTIFY_USB_CONNECTION_STATE        
-        int adc_index = usb_connection_state ? 1 : 2;   /* To choose adc value from the table according the state of USB connection */
-#else
-        int adc_index = 2;
-#endif
-
         if( L_dev_get_adc_val(&adc_val) < 0 )
         {
             failed(1);
@@ -685,9 +679,6 @@ static void L_dev_work_func (struct work_struct *unused)
         }
         
         L_dev.last_adc_val = adc_val;
-	//for test		
-	//printk(KERN_DEBUG "LSENSOR: %s: adc_val=%d\n", __func__,adc_val);
-        
         {
             int lux = 11000;
             int i = 0;

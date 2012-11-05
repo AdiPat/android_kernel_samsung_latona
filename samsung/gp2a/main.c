@@ -101,10 +101,6 @@ static irqreturn_t P_isr( int irq, void *unused );
 
 /*waitq related functions*/
 static void P_waitq_init(void);
-static void P_waitq_list_insert_proc(P_fpriv_data_t *);
-static void P_waitq_prepare_to_wait(P_fpriv_data_t *);
-static void P_waitq_list_remove_proc(P_fpriv_data_t *);
-static void P_waitq_finish_wait(P_fpriv_data_t *);
 
 /*module param*/
 static u16 an_sleep_func = P_AN_SLEEP_OFF;
