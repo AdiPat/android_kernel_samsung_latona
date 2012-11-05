@@ -4,8 +4,28 @@
 # create a compressed vmlinuz image from the original vmlinux
 #
 
-HEAD	= head.o
-OBJS	= misc.o decompress.o
+OBJS		=
+plus_sec := $(call as-instr,.arch_extension sec,+sec)
+
+# Ensure that mmcif loader code appears early in the image
+# to minimise that number of bocks that have to be read in
+# order to load it.
+ifeq ($(CONFIG_ZBOOT_ROM_MMCIF),y)
+ifeq ($(CONFIG_ARCH_SH7372),y)
+OBJS		+= mmcif-sh7372.o
+endif
+endif
+
+AFLAGS_head.o := -DTEXT_OFFSET=$(TEXT_OFFSET)
+AFLAGS_head.o += -Wa,-march=armv7-a$(plus_sec)
+HEAD = head.o
+
+AFLAGS_misc.o +=-Wa,-march=armv7-a$(plus_sec)
+MISC = misc.o
+
+AFLAGS_decompress.o += -Wa,-march=armv7-a$(plus_sec)
+DECOMPRESS = decompress.o
+
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
 
 #
@@ -19,10 +39,6 @@ ifeq ($(CONFIG_ARCH_SHARK),y)
 OBJS		+= head-shark.o ofw-shark.o
 endif
 
-ifeq ($(CONFIG_ARCH_L7200),y)
-OBJS		+= head-l7200.o
-endif
-
 ifeq ($(CONFIG_ARCH_P720T),y)
 # Borrow this code from SA1100
 OBJS		+= head-sa1100.o
@@ -32,11 +48,15 @@ ifeq ($(CONFIG_ARCH_SA1100),y)
 OBJS		+= head-sa1100.o
 endif
 
+ifeq ($(CONFIG_ARCH_VT8500),y)
+OBJS		+= head-vt8500.o
+endif
+
 ifeq ($(CONFIG_CPU_XSCALE),y)
 OBJS		+= head-xscale.o
 endif
 
-ifeq ($(CONFIG_PXA_SHARPSL),y)
+ifeq ($(CONFIG_PXA_SHARPSL_DETECT_MACH_ID),y)
 OBJS		+= head-sharpsl.o
 endif
 
@@ -46,6 +66,10 @@ OBJS		+= big-endian.o
 else
 # The endian should be set by h/w design.
 endif
+endif
+
+ifeq ($(CONFIG_ARCH_SHMOBILE),y)
+OBJS		+= head-shmobile.o
 endif
 
 #
@@ -58,19 +82,19 @@ ZTEXTADDR	:= $(CONFIG_ZBOOT_ROM_TEXT)
 ZBSSADDR	:= $(CONFIG_ZBOOT_ROM_BSS)
 else
 ZTEXTADDR	:= 0
-ZBSSADDR	:= ALIGN(4)
+ZBSSADDR	:= ALIGN(8)
 endif
 
 SEDFLAGS	= s/TEXT_START/$(ZTEXTADDR)/;s/BSS_START/$(ZBSSADDR)/
 
-suffix_$(CONFIG_KERNEL_GZIP) = gzip
-suffix_$(CONFIG_KERNEL_LZO)  = lzo
-suffix_$(CONFIG_KERNEL_LZMA) = lzma
-suffix_$(CONFIG_KERNEL_XZ) = xzkern
+suffix_$(CONFIG_KERNEL_GZIP) := gzip
+suffix_$(CONFIG_KERNEL_LZO)  := lzo
+suffix_$(CONFIG_KERNEL_LZMA) := lzma
+suffix_$(CONFIG_KERNEL_XZ)   := xzkern
 
-targets       := vmlinux vmlinux.lds \
+targets := vmlinux vmlinux.lds \
 		 piggy.$(suffix_y) piggy.$(suffix_y).o \
-		 font.o font.c head.o misc.o $(OBJS)
+		 font.o font.c head.o misc.o decompress.o $(OBJS)
 
 # Make sure files are removed during clean
 extra-y       += piggy.gzip piggy.lzo piggy.lzma piggy.xzkern lib1funcs.S ashldi3.S
@@ -80,21 +104,15 @@ ORIG_CFLAGS := $(KBUILD_CFLAGS)
 KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
 endif
 
-EXTRA_CFLAGS  := -fpic -fno-builtin
-EXTRA_AFLAGS  := -Wa,-march=all
+ccflags-y := -fpic -fno-builtin
+asflags-y := -Wa,-march=all
 
-# Supply ZRELADDR, INITRD_PHYS and PARAMS_PHYS to the decompressor via
-# linker symbols.  We only define initrd_phys and params_phys if the
-# machine class defined the corresponding makefile variable.
-LDFLAGS_vmlinux := --defsym zreladdr=$(ZRELADDR)
+# Supply ZRELADDR to the decompressor via a linker symbol.
+ifneq ($(CONFIG_AUTO_ZRELADDR),y)
+LDFLAGS_vmlinux += --defsym zreladdr=$(ZRELADDR)
+endif
 ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
 LDFLAGS_vmlinux += --be8
-endif
-ifneq ($(INITRD_PHYS),)
-LDFLAGS_vmlinux += --defsym initrd_phys=$(INITRD_PHYS)
-endif
-ifneq ($(PARAMS_PHYS),)
-LDFLAGS_vmlinux += --defsym params_phys=$(PARAMS_PHYS)
 endif
 # ?
 LDFLAGS_vmlinux += -p
@@ -106,25 +124,28 @@ LDFLAGS_vmlinux += -X
 LDFLAGS_vmlinux += -T
 
 # For __aeabi_uidivmod
+AFLAGS_lib1funcs.o +=-Wa,-march=armv7-a$(plus_sec)
 lib1funcs = $(obj)/lib1funcs.o
 
 $(obj)/lib1funcs.S: $(srctree)/arch/$(SRCARCH)/lib/lib1funcs.S FORCE
 	$(call cmd,shipped)
 
 # For __aeabi_llsl
+AFLAGS_ashldi3.o +=-Wa,-march=armv7-a$(plus_sec)
 ashldi3 = $(obj)/ashldi3.o
 
 $(obj)/ashldi3.S: $(srctree)/arch/$(SRCARCH)/lib/ashldi3.S FORCE
 	$(call cmd,shipped)
 
-$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.$(suffix_y).o \
-	 	$(addprefix $(obj)/, $(OBJS)) $(lib1funcs) $(ashldi3) FORCE
+$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/$(MISC) $(obj)/$(DECOMPRESS) $(obj)/piggy.$(suffix_y).o \
+    $(addprefix $(obj)/, $(OBJS)) $(lib1funcs) $(ashldi3) FORCE
 	$(call if_changed,ld)
-	@:
+	@$(check_for_bad_syms)
 
 $(obj)/piggy.$(suffix_y): $(obj)/../Image FORCE
 	$(call if_changed,$(suffix_y))
 
+AFLAGS_piggy.$(suffix_y).o += -Wa,-march=armv7-a$(plus_sec)
 $(obj)/piggy.$(suffix_y).o:  $(obj)/piggy.$(suffix_y) FORCE
 
 CFLAGS_font.o := -Dstatic=
@@ -132,5 +153,5 @@ CFLAGS_font.o := -Dstatic=
 $(obj)/font.c: $(FONTC)
 	$(call cmd,shipped)
 
-$(obj)/vmlinux.lds: $(obj)/vmlinux.lds.in arch/arm/boot/Makefile .config
+$(obj)/vmlinux.lds: $(obj)/vmlinux.lds.in arch/arm/boot/Makefile $(KCONFIG_CONFIG)
 	@sed "$(SEDFLAGS)" < $< > $@
