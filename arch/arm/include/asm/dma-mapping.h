@@ -9,6 +9,8 @@
 #include <asm-generic/dma-coherent.h>
 #include <asm/memory.h>
 
+#define DMA_ERROR_CODE (~0)
+
 /*
  * page_to_dma/dma_to_virt/virt_to_dma are architecture private functions
  * used internally by the DMA-mapping API to provide DMA addresses. They
@@ -159,7 +161,7 @@ static inline int dma_is_consistent(struct device *dev, dma_addr_t handle)
  */
 static inline int dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
 {
-	return dma_addr == ~0;
+	return dma_addr == DMA_ERROR_CODE;
 }
 
 /*
