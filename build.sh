@@ -2,7 +2,7 @@
 # SET SOME PATH VARIABLES
 ROOT="/home/aditya/i9003"
 # Toolchain path 
-CROSS_COMPILE="/home/aditya/Toolchain/arm-eabi-linaro-4.6.2/bin/arm-eabi"
+CROSS_COMPILE="/home/aditya/Toolchain/arm-eabi-linaro-4.7.2/bin/arm-eabi"
 KERNEL_DIR="/home/aditya/i9003/GB"
 RAMDISK_DIR="/home/aditya/i9003/ramdisk"
 MODULES_DIR="$RAMDISK_DIR/lib/modules"
