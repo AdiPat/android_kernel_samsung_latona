@@ -1319,7 +1319,7 @@ void mtp_function_enable(int enable)
 
 #ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 /* soonyong.cho : It is for using samsung composite framework. */
-static struct android_usb_function mtp_function = {
+static struct android_usb_function mtp_function __refdata = {
 	.name = "mtp",
 	.bind_config = mtp_function_add,
 };
