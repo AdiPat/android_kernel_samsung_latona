@@ -119,7 +119,7 @@ unsigned int g_firmware_ret = 2;
 static ssize_t ts_show(struct kobject *, struct kobj_attribute *, char *);
 static ssize_t ts_store(struct kobject *k, struct kobj_attribute *,
 			  const char *buf, size_t n);
-ssize_t firmware_show(struct device *dev, struct device_attribute *attr, char *buf);
+static ssize_t firmware_show(struct device *dev, struct device_attribute *attr, char *buf);
 static ssize_t firmware_update_store(
 		struct device *dev, struct device_attribute *attr,
 		const char *buf, size_t size);
@@ -500,17 +500,26 @@ void enable_tsp_irq(void)
 	enable_irq(tsp.irq);	
 }
 
+static ssize_t firmware_show(struct device *dev, struct device_attribute *attr, char *buf)
+{	// v1.2 = 18 , v1.4 = 20 , v1.5 = 21
+	printk(KERN_DEBUG "[TSP] QT602240 Firmware Ver.\n");
+	printk(KERN_DEBUG "[TSP] version = %x\n", g_version);
+	printk(KERN_DEBUG "[TSP] Build = %x\n", g_build);
+	//	printk("[TSP] version = %d\n", info_block->info_id.version);
+	//	sprintf(buf, "QT602240 Firmware Ver. %x\n", info_block->info_id.version);
+	sprintf(buf, "QT602240 Firmware Ver. %x \nQT602240 Firmware Build. %x\n", g_version, g_build );
+
+	return sprintf(buf, "%s", buf );
+}
+
 static ssize_t firmware_update_store(
 		struct device *dev, struct device_attribute *attr,
 		const char *buf, size_t size)
-{		
+{
 	char *after;
-	unsigned long value = simple_strtoul(buf, &after, 10);
 	g_firmware_ret = 2;
 
-	
-	
-		
+	unsigned long value = simple_strtoul(buf, &after, 10);	
 	printk(KERN_INFO "[TSP] %s\n", __FUNCTION__);
 
 	if ( value == 1 )	// auto update.
@@ -708,7 +717,7 @@ void handle_multi_touch(uint8_t *atmel_msg)
 	uint8_t touch_message_flag = 0;// ryun 20100208
 	unsigned char one_touch_input_flag=0;
 	int id;
-	int i, touch_count = 0; 
+	int i, touch_count;
 
 	x = atmel_msg[2];
 	x = x << 2;
@@ -1126,18 +1135,23 @@ static int __init touchscreen_probe(struct platform_device *pdev)
   	tsp.inputdevice->id.product =0;
  	tsp.inputdevice->id.version =0;
 	
-       //default is LATONA:
+    // model specific settings
+    switch(g_model) 
+    {
+        case LATONA:
+        {
+            tsp.inputdevice->keybit[BIT_WORD(TOUCH_MENU)] |= BIT_MASK(TOUCH_MENU);
+            tsp.inputdevice->keybit[BIT_WORD(TOUCH_BACK)] |= BIT_MASK(TOUCH_BACK);
+            tsp.inputdevice->keycode = atmel_ts_tk_keycode;
+        	input_set_abs_params(tsp.inputdevice, ABS_MT_POSITION_X, 0, MAX_TOUCH_X_RESOLUTION, 0, 0);
+        	input_set_abs_params(tsp.inputdevice, ABS_MT_POSITION_Y, 0, MAX_TOUCH_Y_RESOLUTION, 0, 0);
+        	input_set_abs_params(tsp.inputdevice, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
+        	input_set_abs_params(tsp.inputdevice, ABS_MT_WIDTH_MAJOR, 0, 30, 0, 0);
+        	input_set_abs_params(tsp.inputdevice, ABS_MT_TRACKING_ID, 0, MAX_TOUCH_NUM - 1, 0, 0);
+        }
+        break;
+    }        
 
-       tsp.inputdevice->keybit[BIT_WORD(TOUCH_MENU)] |= BIT_MASK(TOUCH_MENU);
-       tsp.inputdevice->keybit[BIT_WORD(TOUCH_BACK)] |= BIT_MASK(TOUCH_BACK);
-       tsp.inputdevice->keycode = atmel_ts_tk_keycode;
-       input_set_abs_params(tsp.inputdevice, ABS_MT_POSITION_X, 0, MAX_TOUCH_X_RESOLUTION, 0, 0);
-       input_set_abs_params(tsp.inputdevice, ABS_MT_POSITION_Y, 0, MAX_TOUCH_Y_RESOLUTION, 0, 0);
-       input_set_abs_params(tsp.inputdevice, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
-       input_set_abs_params(tsp.inputdevice, ABS_MT_WIDTH_MAJOR, 0, 30, 0, 0);
-       input_set_abs_params(tsp.inputdevice, ABS_MT_TRACKING_ID, 0, MAX_TOUCH_NUM - 1, 0, 0);
-        
-     
 	ret = input_register_device(tsp.inputdevice);
 	if (ret) {
 	printk(KERN_ERR "atmel_ts_probe: Unable to register %s \
@@ -1414,7 +1428,7 @@ static int touchscreen_resume(struct platform_device *pdev)
 	return 0;
 }
 
-static void touchscreen_shutdown(struct platform_device *pdev)
+static int touchscreen_shutdown(struct platform_device *pdev)
 {
 	qt60224_notfound_flag = 1; // to prevent misorder
 
@@ -1430,7 +1444,10 @@ static void touchscreen_shutdown(struct platform_device *pdev)
 		}
 	}
 	gpio_set_value(OMAP_GPIO_TOUCH_EN, 0);
+
 	printk("[TSP] %s   !!!\n", __func__);
+
+	return 0;
 }
 
 static void touchscreen_device_release(struct device *dev)
@@ -1441,7 +1458,7 @@ static void touchscreen_device_release(struct device *dev)
 static struct platform_driver touchscreen_driver = {
 	.probe 		= touchscreen_probe,
 	.remove 	= touchscreen_remove,
-	.shutdown       = touchscreen_shutdown,
+	.shutdown = touchscreen_shutdown,
 #ifndef CONFIG_HAS_EARLYSUSPEND		// 20100113 ryun 
 	.suspend 	= &touchscreen_suspend,
 	.resume 	= &touchscreen_resume,
