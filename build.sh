@@ -11,21 +11,31 @@ OUT="/home/aditya/i9003/out"
 BASE="81800000"
 
 # DONE
-
+echo "***********************************************"
 echo "|~~~~~~~~COMPILING TITANIUM KERNEL ~~~~~~~~~~~|"
 echo "|---------------------------------------------|"
+echo "***********************************************"
+echo "---------- Adi_Pat @ XDA-DEVELOPERS -----------"
+echo "***********************************************"
 echo "Cleaning source"
+if [ -a $OUT/normalboot.img ]; then
 rm $OUT/normalboot.img
-cd ../
+fi
+if [ -a $ROOT/*.lzma ]; then
 rm *.lzma
+fi
 cd $KERNEL_DIR 
 export CROSS_COMPILE=$CROSS_COMPILE-
 make -j clean mrproper
-echo "Importing defconfig"
+if [ $1 = "release" ]; then
+echo "Importing RELEASE DEFCONFIG "
+make -j latona_galaxysl_defconfig
+else
+echo "Importing DEBUG DEFCONFIG"
 make -j debug_defconfig
-echo "Please Enter Release Version" 
-read version
-echo "$version" > .version
+fi
+echo "Release version is $2" 
+echo $2 > .version
 echo ">> COMPILING!"
 make -j84
 echo "Copying modules and stripping em"
