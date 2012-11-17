@@ -2050,9 +2050,9 @@ void suspend(struct early_suspend *h)
 	struct suspend_info *info = container_of(h, struct suspend_info,
 						early_suspend);
 	struct fb_info *fbi = info->fbi;
-	struct omapfb_info *ofbi = FB2OFB(fbi);
-	struct omapfb2_device *fbdev = ofbi->fbdev;
-	struct omap_dss_device *display = fb2display(fbi);
+	
+	
+	
 
 /* FIXME: Is it only for AMOLED devices? */
 #ifdef CONFIG_MACH_OMAP_SAMSUNG
@@ -2072,13 +2072,7 @@ if (!display) {
 
 void resume(struct early_suspend *h)
 {
-	struct suspend_info *info = container_of(h, struct suspend_info,
-						early_suspend);
-	struct fb_info *fbi = info->fbi;
-	struct omapfb_info *ofbi = FB2OFB(fbi);
-	struct omapfb2_device *fbdev = ofbi->fbdev;
-	struct omap_dss_device *display = fb2display(fbi);
-
+	
 	/* TODO: Fix PM later */
 	/* omapfb_vrfb_resume_all(fbdev);*/
 /*	
