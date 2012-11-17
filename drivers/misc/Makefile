@@ -44,3 +44,4 @@ obj-$(CONFIG_TWL6040_VIB)	+= twl6040-vib.o
 obj-$(CONFIG_CDC_TCXO)		+= cdc_tcxo.o
 obj-y				+= ti-st/
 obj-y				+= level/
+obj-$(CONFIG_FSYNC_CONTROL)     += fsync_control.o
