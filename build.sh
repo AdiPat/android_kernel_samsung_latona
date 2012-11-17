@@ -37,7 +37,8 @@ fi
 echo "Release version is $2" 
 echo $2 > .version
 echo ">> COMPILING!"
-make -j84
+echo ">> Building Modules" 
+make -j modules
 echo "Copying modules and stripping em"
 find -name '*.ko' -exec cp -av {} $MODULES_DIR/ \;
 
@@ -52,8 +53,10 @@ do
 /home/aditya/Toolchain/arm-eabi-linaro-4.6.2/bin/arm-eabi-strip --strip-unneeded $m
 done
 
+echo ">> Building zImage"
+cd $KERNEL_DIR 
+make -j84 zImage
 
-cd $KERNEL_DIR
 echo "Packing Ramdisk"
 cd $ROOT
 ./mkbootfs ramdisk | lzma > ramdisk.lzma
