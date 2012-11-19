@@ -63,7 +63,6 @@ clear
 clear
 
 ###################### DONE ##########################
-$bold
 $cyan
 echo "***********************************************"
 echo "|~~~~~~~~COMPILING TITANIUM KERNEL ~~~~~~~~~~~|"
@@ -80,10 +79,12 @@ $normal
 
 echo ">> Cleaning source"
 
+# Clean old built kernel in out folder 
 if [ -a $OUT/$KERNEL ]; then
 rm $OUT/$KERNEL
 fi
 
+# Import Defconfig
 cd $KERNEL_DIR 
 export ARCH=arm CROSS_COMPILE=$TOOLCHAIN-
 make -j clean mrproper
@@ -98,6 +99,7 @@ echo "Importing $DEFCONFIG"
 make -j $DEFCONFIG
 fi
 
+# Set Release Version 
 if [ -n VERSION ]; then
 echo "Release version is 0"
 echo "0" > .version
@@ -106,6 +108,8 @@ echo "Release version is $VERSION"
 echo $VERSION > .version
 rm VERSION
 fi
+
+# Build Modules
 $bold
 echo ">> COMPILING!"
 echo ">> Building Modules" 
@@ -115,7 +119,7 @@ $normal
 echo "Copying modules"
 find -name '*.ko' -exec cp -av {} $MODULES_DIR/ \;
 
-
+# Strip unneeded symbols
 cd $MODULES_DIR
 echo ">> Strip modules for size"
 
@@ -124,7 +128,7 @@ do echo $m
 $TOOLCHAIN-strip --strip-unneeded $m
 done
 
-$bold
+# Build zImage
 $white
 echo ">> Building zImage"
 cd $KERNEL_DIR 
@@ -152,7 +156,6 @@ echo "DONE, PRESS ENTER TO FINISH"
 $normal
 read ANS
 else
-$bold
 $red
 echo "No compiled zImage at $KERNEL_DIR/arch/arm/boot/zImage"
 echo "Compilation failed - Fix errors and recompile "
