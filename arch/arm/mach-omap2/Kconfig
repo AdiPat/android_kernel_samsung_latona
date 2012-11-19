@@ -423,7 +423,7 @@ config OMAP4_KEEP_STATIC_DEPENDENCIES
 config OMAP_RAM_CONSOLE
 	bool "Enable OMAP support for Android RAM Console" 
 	depends on ANDROID_RAM_CONSOLE
-	default y
+	default n
 	help
 	  Select this option to enable Android RAM console support on OMAP.
  	  This allows saving the kernel printk messages to a buffer in RAM, so
