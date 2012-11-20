@@ -48,7 +48,7 @@
 
 #define SEC_OMAP_OUTPUT_GPIO(name, val)		{name, val, (unsigned int)#name},
 
-static unsigned int __omap_board_output_gpio[][3] __initdata = {
+static unsigned int __omap_board_output_gpio[][3] = {
 	SEC_OMAP_OUTPUT_GPIO(OMAP_GPIO_PS_HOLD_PU, 0)
 	SEC_OMAP_OUTPUT_GPIO(OMAP_GPIO_FM_nRST, 0)
 	SEC_OMAP_OUTPUT_GPIO(OMAP_GPIO_CAM_CIF_NRST, 0)
@@ -92,7 +92,7 @@ EXPORT_SYMBOL(sec_board_output_gpio_size);
 unsigned int (*sec_board_output_gpio_ptr)[3] = __omap_board_output_gpio;
 EXPORT_SYMBOL(sec_board_output_gpio_ptr);
 
-static unsigned int __omap_wakeup_gpio[] __initdata = {
+static unsigned int __omap_wakeup_gpio[] = {
 	OMAP_GPIO_JACK_NINT,
 	OMAP_GPIO_IPC_SRDY,
 	OMAP_GPIO_CHG_ING_N,
