@@ -1,4 +1,28 @@
-	Linux kernel release 2.6.xx <http://kernel.org/>
+************************************************
+Titanium~Kernel- (Samsung Galaxy SL GT-I9003)
+
+Custom Kernel for Samsung GT-I9003.
+
+Maintained by Aditya Patange aka Adi_Pat. 
+
+To build from my sources, 
+
+Clone the source. 
+
+Change the directories in build.sh (Refer to it for further instructions)
+
+I use GCC 4.7.2 Toolchain, however you can use GCC 4.6 too. 
+ 
+Make sure you have mkbootimg and mkbootfs binaries in ROOT(Check build script) folder.
+
+If you use my Sources make sure you give me the appropriate Credit, 
+
+Since I have worked very hard on this! 
+
+***********************************************
+
+
+Linux kernel release 2.6.xx <http://kernel.org/>
 
 These are the release notes for Linux version 2.6.  Read them carefully,
 as they tell you what this is all about, explain how to install the
