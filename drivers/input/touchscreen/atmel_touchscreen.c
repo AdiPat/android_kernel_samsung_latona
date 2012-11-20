@@ -1455,7 +1455,7 @@ static void touchscreen_device_release(struct device *dev)
 	/* Nothing */
 }
 
-static struct platform_driver touchscreen_driver = {
+static struct platform_driver touchscreen_driver __refdata = {
 	.probe 		= touchscreen_probe,
 	.remove 	= touchscreen_remove,
 	.shutdown = touchscreen_shutdown,
