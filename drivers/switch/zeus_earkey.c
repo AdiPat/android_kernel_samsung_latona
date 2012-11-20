@@ -349,7 +349,7 @@ static int __devexit ear_key_driver_remove(struct platform_device *plat_dev)
 	return 0;
 }
 
-struct platform_driver ear_key_driver_t = {
+struct platform_driver ear_key_driver_t __refdata = {
         .probe          = &ear_key_driver_probe,
         .remove         = __devexit_p(ear_key_driver_remove),
         .driver         = {
