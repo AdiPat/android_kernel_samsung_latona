@@ -431,7 +431,7 @@ static struct regulator_init_data omap_board_aux2 = {
 
 /* VSIM for OMAP VDD_MMC1A (i/o for DAT4..DAT7) */
 
-static struct omap2_hsmmc_info mmc[] __initdata = {
+static struct omap2_hsmmc_info mmc[] = {
 	{
 		.name		= "internal",
 		.mmc		= 2,
