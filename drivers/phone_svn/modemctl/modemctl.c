@@ -216,7 +216,7 @@ static const struct attribute_group modemctl_group = {
 
 static void infinion_on(struct modemctl *mc)
 {
-	int switch_sel;
+	//int switch_sel;
 
 	dev_dbg(mc->dev, "%s\n", __func__);
 	if(!mc->gpio_cp_reset )
@@ -231,7 +231,7 @@ static void infinion_on(struct modemctl *mc)
 
 	msleep(100);
 
-	if( switch_sel & UART_SEL_MASK ){	//PDA
+	/*if( switch_sel & UART_SEL_MASK ){	//PDA
 		if( gpio_get_value(126) == 0 ){
 			gpio_set_value(126, 1);	//uart connected with AP
 			dev_dbg( mc->dev, "%s: (%d) GPIO_UART_SEL = %d\n", __func__, __LINE__, gpio_get_value(126) );
@@ -240,7 +240,7 @@ static void infinion_on(struct modemctl *mc)
 			dev_dbg( mc->dev, "%s: (%d) GPIO_UART_SEL = %d\n", __func__, __LINE__, gpio_get_value(126) );
 		}
 	}
-	else{	//MODEM
+	else{	//MODEM*/
 		if( gpio_get_value(126) == 1 ){
 			gpio_set_value(126, 0);	//uart connected with CP
 			dev_dbg( mc->dev, "%s: (%d) GPIO_UART_SEL = %d\n", __func__, __LINE__, gpio_get_value(126) );
@@ -248,7 +248,7 @@ static void infinion_on(struct modemctl *mc)
 		else{
 			dev_dbg( mc->dev, "%s: (%d) GPIO_UART_SEL = %d\n", __func__, __LINE__, gpio_get_value(126) );
 		}
-	}
+	//}
 
 	msleep(200);
 	gpio_set_value(mc->gpio_pda_active, 1);
