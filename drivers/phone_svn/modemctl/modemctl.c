@@ -213,7 +213,6 @@ static const struct attribute_group modemctl_group = {
 };
 
 #define UART_SEL_MASK   (1 << 1)
-extern void (*sec_get_param_value)(int idx, void *value);
 
 static void infinion_on(struct modemctl *mc)
 {
@@ -231,14 +230,6 @@ static void infinion_on(struct modemctl *mc)
 	gpio_set_value(mc->gpio_cp_reset, 1);
 
 	msleep(100);
-
-	if( sec_get_param_value ){
-		sec_get_param_value( __SWITCH_SEL, &switch_sel );
-	}
-	else {	
-	    printk( "[SWITCH_SIO] %s : failed to set switch because there are no param\n",__func__ );
-		return;
-	}
 
 	if( switch_sel & UART_SEL_MASK ){	//PDA
 		if( gpio_get_value(126) == 0 ){
