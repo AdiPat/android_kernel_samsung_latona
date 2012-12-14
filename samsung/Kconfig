@@ -25,12 +25,6 @@
 
 menu "Samsung Private Third-Party Device Drviers"
 
-menu "RFS_3.0.0_b040-LinuStoreIII_1.2.0_b038-FSR_1.2.1p1_b139_RC"
-#source "samsung/rfs_fsr/drivers/fsr/Kconfig"
-source "samsung/rfs_fsr/drivers/tfsr/Kconfig"
-#source "samsung/rfs_fsr/fs/rfs/Kconfig"
-endmenu
-
 menu "Immersion touch sense driver(vibetonz)"
 source "samsung/vibetonz/Kconfig"
 endmenu
@@ -41,14 +35,6 @@ endmenu
 
 menu "Si4709 FM radio"
 source "samsung/fm_si4709/Kconfig"
-endmenu
-
-menu "Samsung J4FS Support"
-source "samsung/j4fs/Kconfig"
-endmenu
-
-menu "Samsung Param-Partition Support"
-source "samsung/param/Kconfig"
 endmenu
 
 menu "Yamaha YAS529 Geomagnetic Sensor Support"

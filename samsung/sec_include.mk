@@ -24,4 +24,3 @@
 ##
 
 LINUXINCLUDE += -I$(srctree)/samsung/include
-LINUXINCLUDE += -I$(srctree)/samsung/rfs_fsr/include
