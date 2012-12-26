@@ -828,7 +828,7 @@ void handle_multi_touch(uint8_t *atmel_msg)
 		input_sync(tsp.inputdevice);
 #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 		if(prev_touch_count != touch_count) {
-			printk(KERN_DEBUG "[TSP] id[%d],x=%d,y=%d,%dpoint(s)\n", id, x, y, touch_count);
+			// printk(KERN_DEBUG "[TSP] id[%d],x=%d,y=%d,%dpoint(s)\n", id, x, y, touch_count);
 			prev_touch_count = touch_count;
 		}
 #endif

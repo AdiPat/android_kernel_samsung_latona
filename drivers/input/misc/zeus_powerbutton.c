@@ -129,8 +129,8 @@ static irqreturn_t powerkey_press_handler(int irq_num, void * dev)
   input_report_key(ip_dev,KEY_POWER,key_press_status);
   input_sync(ip_dev);
 #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
-  dev_dbg(ip_dev->dev.parent,"Sent KEY_POWER event = %d\n",key_press_status);
-  printk("[PWR-KEY] KEY_POWER event = %d\n",key_press_status);
+ // dev_dbg(ip_dev->dev.parent,"Sent KEY_POWER event = %d\n",key_press_status);
+ // printk("[PWR-KEY] KEY_POWER event = %d\n",key_press_status);
 #endif
 #if defined(CONFIG_INPUT_GPIO_VOLUME_KEY) && defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
   check_force_crash(POWER_KEY_FLAG, key_press_status);
@@ -164,7 +164,7 @@ static irqreturn_t homekey_press_handler(int irq_num, void * dev)
     last_home_key_press_status = 0;
 
 #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
-    printk("Status of last KEY_HOME event reset to zero\n");
+   // printk("Status of last KEY_HOME event reset to zero\n");
 #endif
   }
 
@@ -172,7 +172,7 @@ static irqreturn_t homekey_press_handler(int irq_num, void * dev)
   // In case the event is the same as last time, it has to be a falsely recognized event and we have to ignore it, too.
   if (ts_sub_to_ms(current_kernel_time(), home_key_up_time) < 50 || home_key_press_status == last_home_key_press_status) {
 #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
-    printk("KEY_HOME event ignored, probably unwanted keypress\n");
+   // printk("KEY_HOME event ignored, probably unwanted keypress\n");
 #endif
 
     return IRQ_HANDLED;
@@ -185,8 +185,8 @@ static irqreturn_t homekey_press_handler(int irq_num, void * dev)
   home_key_up_time = current_kernel_time();
 
 #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
-  dev_dbg(ip_dev->dev.parent,"Sent KEY_HOME event = %d\n",home_key_press_status);
-  printk("Sent KEY_HOME event = %d\n",home_key_press_status);
+ // dev_dbg(ip_dev->dev.parent,"Sent KEY_HOME event = %d\n",home_key_press_status);
+ // printk("Sent KEY_HOME event = %d\n",home_key_press_status);
 #endif
 
   if (lcd_wq && home_key_press_status)
