@@ -13,6 +13,11 @@
  *
  */
 
+#define CONFIG_SAMSUNG_KERNEL_DEBUG_USER 1
+
+#define S2_WAKE 1
+
+
 #define RESERVED_T0                               0u
 #define RESERVED_T1                               1u
 #define DEBUG_DELTAS_T2                           2u
@@ -86,6 +91,21 @@
 
 #include <linux/wakelock.h>
 #include "atmel_touch.h"
+
+
+#ifdef S2_WAKE
+#include <linux/input/s2wake.h>
+
+extern void request_suspend_state(int);
+extern int get_suspend_state(void);
+
+static unsigned int wake_start = -1;
+static unsigned int wake_start_y = -100;
+static unsigned int x_lo;
+static unsigned int x_hi;
+static unsigned int y_tolerance = 132;
+
+#endif
 
 #ifdef CONFIG_TOUCHKEY_LOCK
 extern unsigned int touchkey_lock_flag;
@@ -595,9 +615,9 @@ void keyarray_handler(uint8_t * atmel_msg)
 	if( (atmel_msg[2] & 0x1) && (menu_button==0) ) // menu press
 	{
 		menu_button = 1;
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
+// #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 		printk(KERN_DEBUG "[TSP] menu_button is pressed\n");
-#endif
+// #endif
 		input_report_key(tsp.inputdevice, 139, DEFAULT_PRESSURE_DOWN);
         	input_sync(tsp.inputdevice);    		
 		trigger_touchkey_led(1);
@@ -605,9 +625,9 @@ void keyarray_handler(uint8_t * atmel_msg)
 	else if( (atmel_msg[2] & 0x2) && (back_button==0) ) // back press
 	{
 		back_button = 1;
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
+// #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 		printk(KERN_DEBUG "[TSP] back_button is pressed\n");                
-#endif
+// #endif
 		input_report_key(tsp.inputdevice, 158, DEFAULT_PRESSURE_DOWN);                
         	input_sync(tsp.inputdevice);    				
 		trigger_touchkey_led(2);
@@ -615,23 +635,23 @@ void keyarray_handler(uint8_t * atmel_msg)
 	else if( (~atmel_msg[2] & (0x1)) && menu_button==1 ) // menu_release
 	{
 		menu_button = 0;
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
+// #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 		printk(KERN_DEBUG "[TSP] menu_button is released\n");                                
-#endif
+// #endif
 		input_report_key(tsp.inputdevice, 139, DEFAULT_PRESSURE_UP);     
         	input_sync(tsp.inputdevice);    				
 		trigger_touchkey_led(3);
 	}
-	else if( (~atmel_msg[2] & (0x2)) && back_button==1 ) // menu_release
+	else if( (~atmel_msg[2] & (0x2)) && back_button==1 ) // back_release
 	{
 		back_button = 0;
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
+// #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 		printk(KERN_DEBUG "[TSP] back_button is released\n");
-#endif
+// #endif
 		input_report_key(tsp.inputdevice, 158, DEFAULT_PRESSURE_UP); 
         	input_sync(tsp.inputdevice);    				
 		trigger_touchkey_led(3);
-	}
+	}	
 	else
 	{
 		menu_button=0; 
@@ -715,6 +735,8 @@ int pre_x, pre_y, pre_size;
 
 ////ryun 20100208 add
 extern void check_chip_calibration(unsigned char one_touch_input_flag);
+
+
 void handle_multi_touch(uint8_t *atmel_msg)
 {
 	u16 x=0, y=0;
@@ -725,7 +747,7 @@ void handle_multi_touch(uint8_t *atmel_msg)
 	unsigned char cal_release_number_of_check=0;
 	int id;
 	int i, touch_count;
-
+	int q = get_s2wake_status();
 	x = atmel_msg[2];
 	x = x << 2;
 	x = x | (atmel_msg[4] >> 6);
@@ -795,8 +817,8 @@ void handle_multi_touch(uint8_t *atmel_msg)
 #endif
 		}
 		/* case.2 - case 10010000 -> DETECT & MOVE */
-		else if( ( atmel_msg[1] & 0x90 ) == 0x90 )
-		{
+		else if( ( atmel_msg[1] & 0x90 ) == 0x90)
+		{	
 			touch_message_flag = 1;
 			touch_info[id].press = 40;
 			touch_info[id].size = size;
@@ -805,7 +827,9 @@ void handle_multi_touch(uint8_t *atmel_msg)
 #if defined(DRIVER_FILTER)
 			equalize_coordinate(0, id, &touch_info[id].x, &touch_info[id].y);
 #endif
+	
 		}
+
 		/* case.3 - case 00100000 -> RELEASE */
 		else if( ((atmel_msg[1] & 0x20 ) == 0x20))   
 		{
@@ -825,13 +849,28 @@ void handle_multi_touch(uint8_t *atmel_msg)
 			if(touch_info[i].press == 0) touch_info[i].press = -1;
 			else touch_count++;
 		}
+		printk("%d x, %d y \n",x,y);
+		if (wake_start == i && x > x_hi && abs(wake_start_y - y) < y_tolerance ) 
+		{
+			printk(KERN_ERR "[TSP] slide2wake up at: %4d\n",touch_info[id].x);
+			slide2wake_pwrtrigger();
+		}
+		wake_start = -1;
+		if (q == 1) 
+		{
+			if (x < x_lo) {
+				printk(KERN_ERR "[TSP] slide2wake down at: %4d\n", x);
+				wake_start = i;
+				wake_start_y = y;
+			}
+		}
 		input_sync(tsp.inputdevice);
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
+// #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 		if(prev_touch_count != touch_count) {
-			// printk(KERN_DEBUG "[TSP] id[%d],x=%d,y=%d,%dpoint(s)\n", id, x, y, touch_count);
+			//printk(KERN_DEBUG "[TSP] id[%d],x=%d,y=%d,%dpoint(s)\n", id, x, y, touch_count);
 			prev_touch_count = touch_count;
 		}
-#endif
+// #endif
 #ifdef CONFIG_TOUCHKEY_LOCK
 		if(touch_count == 0) touchkey_lock_flag = 0;
 #endif
@@ -1332,8 +1371,14 @@ ts_kobj = kobject_create_and_add("touchscreen", NULL);
 	        printk(" error occured in initializing touch proc file\n");
 	}
 #endif
-	printk(KERN_DEBUG "[TSP] success probe() !\n");
 
+#ifdef S2_WAKE
+	wake_lock_init(&wl_s2w, WAKE_LOCK_SUSPEND, "slide2wake");
+	x_lo = 480 / 10 * 1;	/* 10% display width */
+	x_hi = 480 / 10 * 9;	/* 90% display width */
+	y_tolerance = 800 / 10 * 3 / 2;	
+#endif
+	printk(KERN_DEBUG "[TSP] success probe() !\n");
 	return 0;
 }
 
@@ -1401,41 +1446,56 @@ extern int atmel_resume(void);
 
 static int touchscreen_suspend(struct platform_device *pdev, pm_message_t state)
 {
-	printk(KERN_DEBUG "[TSP] touchscreen_suspend : touch power off\n");
-	atmel_suspend();
-	if (menu_button == 1)
+	int a = get_s2wake_status();
+	if(a == 0)
 	{
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
-		printk(KERN_DEBUG "[TSP] menu_button force released\n");                                
-#endif
-		input_report_key(tsp.inputdevice, 139, DEFAULT_PRESSURE_UP);     
-        	input_sync(tsp.inputdevice);    				
-	}
-	if (back_button == 1)
-	{
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
-		printk(KERN_DEBUG "[TSP] back_button force released\n");
-#endif
-		input_report_key(tsp.inputdevice, 158, DEFAULT_PRESSURE_UP); 
-        	input_sync(tsp.inputdevice);    				
-	}
-
-// Workaround for losing state when suspend mode(power off)
+		printk(KERN_DEBUG "[TSP] touchscreen_suspend : touch power off\n");
+		atmel_suspend();
+ 
+			if (menu_button == 1)
+			{
+				printk(KERN_DEBUG "[TSP] menu_button force released\n");                                
+				input_report_key(tsp.inputdevice, 139, DEFAULT_PRESSURE_UP);     
+        			input_sync(tsp.inputdevice);    				
+			}
+			if (back_button == 1)
+			{
+				printk(KERN_DEBUG "[TSP] back_button force released\n");
+				input_report_key(tsp.inputdevice, 158, DEFAULT_PRESSURE_UP); 
+		        	input_sync(tsp.inputdevice);    					
+			}
 #ifdef CONFIG_TOUCHKEY_LOCK
-	touchkey_lock_flag = 0;
+			touchkey_lock_flag = 0;
 #endif
-	suspend_touchkey_led();
-	return 0;
+			suspend_touchkey_led();
+	}
+	if(a == 1)
+	{
+		printk(KERN_DEBUG "[TSP] touchscreen_suspend : holding suspend! \n");
+#ifdef CONFIG_TOUCHKEY_LOCK
+		touchkey_lock_flag = 0;
+#endif
+	}
+	return 0;	
 }
 
 static int touchscreen_resume(struct platform_device *pdev)
 {
-	printk(KERN_DEBUG "[TSP] touchscreen_resume : touch power on\n");
+	int b = get_s2wake_status();
+	if(b == 0)
+	{
+		printk(KERN_DEBUG "[TSP] touchscreen_resume : touch power on\n");
+		atmel_resume();
+		//	initialize_multi_touch(); 
+		enable_irq(tsp.irq);
+		trigger_touchkey_led(0);
 
-	atmel_resume();
-//	initialize_multi_touch(); 
-	enable_irq(tsp.irq);
-	trigger_touchkey_led(0);
+	}
+	if(b == 1)
+	{
+		printk(KERN_DEBUG "[TSP] touchscreen_resume : POWER already on! \n");
+		trigger_touchkey_led(0);
+	}
 	return 0;
 }
 

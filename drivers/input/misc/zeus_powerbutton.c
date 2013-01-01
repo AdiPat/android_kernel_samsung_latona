@@ -26,6 +26,13 @@
 // For calculation of home key delay
 #include <linux/time.h>
 
+#define S2WAKE 1
+
+#ifdef S2WAKE
+extern void slide2wake_setdev(struct input_dev *input_device);
+#endif
+
+
 #if defined(CONFIG_INPUT_GPIO_VOLUME_KEY) && defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
 #define POWER_KEY_FLAG (1<<0)
 #define VOLDN_KEY_FLAG (1<<1)
@@ -128,10 +135,10 @@ static irqreturn_t powerkey_press_handler(int irq_num, void * dev)
   
   input_report_key(ip_dev,KEY_POWER,key_press_status);
   input_sync(ip_dev);
-#if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
- // dev_dbg(ip_dev->dev.parent,"Sent KEY_POWER event = %d\n",key_press_status);
- // printk("[PWR-KEY] KEY_POWER event = %d\n",key_press_status);
-#endif
+// #if defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
+   dev_dbg(ip_dev->dev.parent,"Sent KEY_POWER event = %d\n",key_press_status);
+   printk("[PWR-KEY] KEY_POWER event = %d\n",key_press_status);
+// #endif
 #if defined(CONFIG_INPUT_GPIO_VOLUME_KEY) && defined(CONFIG_SAMSUNG_KERNEL_DEBUG_USER)
   check_force_crash(POWER_KEY_FLAG, key_press_status);
 #endif
@@ -347,6 +354,9 @@ static int __devinit power_key_driver_probe(struct platform_device *plat_dev)
 
   /* register the input device now */
   input_set_capability(power_key, EV_KEY, KEY_POWER);
+#ifdef S2WAKE
+  slide2wake_setdev(power_key);
+#endif
 #ifdef CONFIG_INPUT_HARD_RESET_KEY
   input_set_capability(power_key, EV_KEY, KEY_HOME);
 #endif
