@@ -43,4 +43,3 @@ obj-$(CONFIG_SENSORS_AK8975)	+= akm8975.o
 obj-$(CONFIG_TWL6040_VIB)	+= twl6040-vib.o
 obj-$(CONFIG_CDC_TCXO)		+= cdc_tcxo.o
 obj-y				+= ti-st/
-obj-y				+= level/
